@@ -1,0 +1,97 @@
+package ${target.javaPackageFromFolder($SRC)};
+
+#set( $currentClassName = "${entity.name}Id" )
+import java.io.Serializable;
+
+import javax.validation.constraints.* ;
+
+#foreach( $import in $java.imports($entity) )
+import $import;
+#end
+#foreach( $import in $jpa.imports($entity))
+import $import;
+#end
+
+/**
+ * Composite primary key for entity "${entity.name}" ( stored in table "${entity.databaseTable}" )
+ *
+ * @author Telosys Tools Generator
+ *
+ */
+@Embeddable
+public class $currentClassName implements Serializable
+{
+    private static final long serialVersionUID = 1L;
+
+    //----------------------------------------------------------------------
+    // ENTITY KEY ATTRIBUTES 
+    //----------------------------------------------------------------------
+#foreach( $field in $entity.keyAttributes )
+$jpa.embeddedIdAnnotations(4, $field)
+$beanValidation.annotations(4, $field)
+    private $field.formatedType(0) $field.formatedName(0)#if($field.hasInitialValue()) = ${field.initialValue} #end;
+    
+#end
+
+    //----------------------------------------------------------------------
+    // CONSTRUCTORS
+    //----------------------------------------------------------------------
+    public $currentClassName()
+    {
+        super();
+    }
+
+    public ${entity.name}Id( $fn.argumentsListWithType($entity.keyAttributes) )
+    {
+        super();
+#foreach( $field in $entity.keyAttributes )
+        this.$field.name = $field.name ;
+#end
+    }
+    
+    //----------------------------------------------------------------------
+    // GETTERS & SETTERS FOR KEY FIELDS
+    //----------------------------------------------------------------------
+#foreach( $field in $entity.keyAttributes )
+#if ( $field.databaseName ) 
+#end
+#if ( $field.setter )    public void ${field.setter}( $field.formatedType(0) value )
+    {
+        this.$field.name = value;
+    }
+#end
+#if ( $field.getter )    public $field.formatedType(0) ${field.getter}()
+    {
+        return this.$field.name;
+    }
+#end
+
+#end  
+
+    //----------------------------------------------------------------------
+    // equals METHOD
+    //----------------------------------------------------------------------
+$java.equalsMethod($currentClassName, $entity.keyAttributes )
+
+    //----------------------------------------------------------------------
+    // hashCode METHOD
+    //----------------------------------------------------------------------
+$java.hashCodeMethod($currentClassName, $entity.keyAttributes )
+
+    //----------------------------------------------------------------------
+    // toString METHOD
+    //----------------------------------------------------------------------
+    public String toString()
+    {
+		StringBuffer sb = new StringBuffer(); 
+#set( $count = 0 )
+#foreach( $field in $entity.keyAttributes )
+#if( $count > 0 )
+		sb.append("|"); 
+#end
+		sb.append($field.name); 
+#set( $count = $count + 1 )
+#end  
+        return sb.toString();
+    }
+}

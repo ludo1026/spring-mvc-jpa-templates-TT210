@@ -1,0 +1,98 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+package ${target.javaPackageFromFolder(${SRC})};
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.format.support.FormattingConversionServiceFactoryBean;
+import org.springframework.stereotype.Component;
+#foreach( $entity in $selectedEntities )
+import ${ENTITY_PKG}.${entity.name};
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ENTITY_PKG}.${entity.name}Id;
+#end
+#end
+#foreach( $entity in $selectedEntities )
+import ${ROOT_PKG}.service.${entity.name}Service;
+#end
+#foreach( $entity in $selectedEntities )
+import ${ROOT_PKG}.web.formatter.${entity.name}Formatter;
+#end
+
+@Component
+public class ApplicationConversionServiceFactoryBean extends FormattingConversionServiceFactoryBean {
+
+#foreach( $entity in $selectedEntities )
+	@Resource
+	private ${entity.name}Formatter ${entity.name.toLowerCase()}Formatter;
+#end
+	
+	public void afterPropertiesSet() {
+        super.afterPropertiesSet();
+        installTypeConverters(getObject());
+        installLabelConverters(getObject());
+    }
+	
+	protected void installTypeConverters(FormatterRegistry registry) {
+		registry.addConverter(getStringToStringConverter());
+	}
+    
+	public Converter<String, String> getStringToStringConverter() {
+        return new Converter<String, String>() {
+ 
+            public String convert(String source) {
+                return StringUtils.trimToNull(source);
+            }
+        };
+    }
+	
+    public void installLabelConverters(FormatterRegistry registry) {
+#foreach( $entity in $selectedEntities )
+		// ${entity.name}
+        registry.addConverter(get${entity.name}ToStringConverter());
+        registry.addConverter(getIdTo${entity.name}Converter());
+#if( ${tools.keyType($entity)} != "String" )
+        registry.addConverter(getStringTo${entity.name}Converter());
+#end
+#end
+    }
+    
+#foreach( $entity in $selectedEntities )
+	@Resource
+	private ${entity.name}Service ${entity.name.toLowerCase()}Service;
+
+    public Converter<${entity.name}, String> get${entity.name}ToStringConverter() {
+        return new Converter<${entity.name}, java.lang.String>() {
+            public String convert(${entity.name} ${entity.name.toLowerCase()}) {
+				return ${entity.name.toLowerCase()}Formatter.display(${entity.name.toLowerCase()});
+            }
+        };
+    }
+    
+#if( ${tools.keyType($entity)} != "String" )
+    public Converter<String, ${entity.name}> getStringTo${entity.name}Converter() {
+        return new Converter<java.lang.String, ${entity.name}>() {
+            public ${entity.name} convert(String ${tools.keyName($entity)}) {
+                return getObject().convert(getObject().convert(${tools.keyName($entity)}, ${tools.keyType($entity)}.class), ${entity.name}.class);
+            }
+        };
+    }
+    
+#end    
+    public Converter<${tools.keyType($entity)}, ${entity.name}> getIdTo${entity.name}Converter() {
+        return new Converter<${tools.keyType($entity)}, ${entity.name}>() {
+            public ${entity.name} convert(${tools.keyType($entity)} ${tools.keyName($entity)}) {
+                return ${entity.name.toLowerCase()}Service.load(${tools.keyName($entity)});
+            }
+        };
+    }
+
+#end
+}

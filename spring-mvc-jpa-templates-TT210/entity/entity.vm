@@ -1,0 +1,185 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+## Key fields = fields in Primary Key    
+#set( $keyFields = $entity.getAttributesByCriteria( $const.KEY ) )
+##--------------------------------------------------------------------------------------------------------
+## Data fields = fields not in Primary Key and not in selected Links    
+#set( $dataFields = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.NOT_IN_SELECTED_LINKS ) )
+##--------------------------------------------------------------------------------------------------------
+## Link fields = fields not in Primary Key and used as FK in selected Links    
+#set( $fieldsLink = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.IN_SELECTED_LINKS ) )
+##--------------------------------------------------------------------------------------------------------
+## Mapped fields = fields in Primary Key or not in selected Links    
+#set( $allMappedFields = $fn.concatLists($entity.keyAttributes, $dataFields) )
+##--------------------------------------------------------------------------------------------------------
+## IF COMPOSITE PRIMARY KEY : GENERATE A JAVA CLASS FOR THIS COMPOSITE KEY
+#if ( $entity.hasCompositePrimaryKey() )
+#set( $ttt = $generator.generate($target.entityName ,  "${entity.name}Id.java", $target.folder, "entity/entity_pk.vm"  ) )
+#end
+package ${target.javaPackageFromFolder($SRC)};
+
+import java.io.Serializable;
+
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+
+#foreach( $import in $java.imports($entity) )
+import $import;
+#end
+
+#foreach( $import in $jpa.imports($entity) )
+import $import;
+#end
+
+$jpa.entityAnnotations(0,$entity)
+public class $entity.name implements Serializable
+{
+    private static final long serialVersionUID = 1L;
+
+#if ( $entity.hasCompositePrimaryKey() )
+    //----------------------------------------------------------------------
+    // ENTITY PRIMARY KEY ( EMBEDDED IN AN EXTERNAL CLASS )  
+    //----------------------------------------------------------------------
+	@EmbeddedId
+	@Valid
+    private ${entity.name}Id id = new ${entity.name}Id();
+
+#else 
+    //----------------------------------------------------------------------
+    // ENTITY PRIMARY KEY ( BASED ON A SINGLE FIELD )
+    //----------------------------------------------------------------------
+#foreach( $field in $entity.keyAttributes )
+$jpa.fieldAnnotations(4,$field)
+## add @GeneratedValue if the database doesn't have auto-incremented columns
+#if( ! $field.isAutoIncremented() && ! $field.isGeneratedValue() )
+#if( $tools.isGeneratedValue( $entity, $field ) )
+	@GeneratedValue
+#end
+#end
+$beanValidation.annotations(4,$field)
+    private $field.formatedType(0) $field.formatedName(0)#if($field.hasInitialValue()) = ${field.initialValue} #end;
+#end
+
+#end
+    //----------------------------------------------------------------------
+    // ENTITY DATA FIELDS 
+    //----------------------------------------------------------------------    
+#foreach( $field in $dataFields )
+$jpa.fieldAnnotations(4,$field)
+$beanValidation.annotations(4,$field)
+    private $field.formatedType(0) $field.formatedName(0)#if($field.hasInitialValue()) = ${field.initialValue} #end;
+
+#end
+
+    //----------------------------------------------------------------------
+    // ENTITY LINKS ( RELATIONSHIP )
+    //----------------------------------------------------------------------
+#foreach( $link in $entity.selectedLinks )
+$jpa.linkAnnotations(4, $link, $allMappedFields )
+    private $link.formatedType(0) $link.formatedName(0);
+
+#end
+#if ( $entity.hasCompositePrimaryKey() )
+    //----------------------------------------------------------------------
+    // GETTER & SETTER FOR THE COMPOSITE KEY 
+    //----------------------------------------------------------------------
+	public ${entity.name}Id getId() {
+        return id;
+    }
+ 
+    public void setId(${entity.name}Id id) {
+        this.id = id;
+    }
+
+#foreach( $field in $entity.keyAttributes )
+#if ( $field.setter )    public void ${field.setter}( $field.formatedType(0) $field.name )
+    {
+        this.id.${field.setter}( $field.name ) ;
+    }
+
+#end
+#if ( $field.getter )    public $field.formatedType(0) ${field.getter}()
+    {
+        return this.id.${field.getter}() ;
+    }
+
+#end
+#end
+#else 
+
+    //----------------------------------------------------------------------
+    // GETTER & SETTER FOR THE KEY FIELD
+    //----------------------------------------------------------------------
+#foreach( $field in $entity.keyAttributes )
+#if ( $field.setter )
+    public void ${field.setter}( $field.formatedType(0) $field.name )
+    {
+        this.$field.name = $field.name ;
+    }
+
+#end
+#if ( $field.getter )
+    public $field.formatedType(0) ${field.getter}()
+    {
+        return this.$field.name;
+    }
+
+#end
+#end
+#end
+    //----------------------------------------------------------------------
+    // GETTERS & SETTERS FOR FIELDS
+    //----------------------------------------------------------------------
+#foreach( $field in $dataFields )
+#if ( $field.setter )
+    public void ${field.setter}( $field.formatedType(0) $field.name )
+    {
+        this.$field.name = $field.name;
+    }
+#end
+#if ( $field.getter )
+    public $field.formatedType(0) ${field.getter}()
+    {
+        return this.$field.name;
+    }
+#end
+
+## #end  
+#end  
+
+    //----------------------------------------------------------------------
+    // GETTERS & SETTERS FOR LINKS
+    //----------------------------------------------------------------------
+#foreach( $link in $entity.selectedLinks )
+#if ( $link.setter )    public void ${link.setter}( ${link.linkType} ${link.javaName} )
+    {
+#set( $fieldsMappingForLink = $tools.fieldsMappingForLink( $entity, $model.getEntityByClassName($link.targetEntityType), $link, $allMappedFields ) )
+#foreach( $fieldMappingForLink in $fieldsMappingForLink.entrySet() )
+		if(${link.javaName} != null && this.${fieldMappingForLink.key.getter}() == null) {
+			this.${fieldMappingForLink.key.setter}(${link.javaName}.${fieldMappingForLink.value.getter}());
+		}
+#end
+        this.${link.javaName} = ${link.javaName};
+    }
+#end
+#if ( $link.getter )    public ${link.linkType} ${link.getter}()
+    {
+        return this.${link.javaName};
+    }
+#end
+
+#end  
+
+    //----------------------------------------------------------------------
+    // toString METHOD
+    //----------------------------------------------------------------------
+    public String toString()
+    {
+#set( $attributes = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.NOT_TEXT, $const.NOT_IN_SELECTED_LINKS ) )    
+$entity.toStringMethodCodeLinesWithKey(8, $attributes, "id") 
+#foreach( $field in $entity.getAttributesByCriteria( $const.TEXT ) )
+		// $field.name is not in toString because it's a "long text" field
+#end  
+    }
+
+}

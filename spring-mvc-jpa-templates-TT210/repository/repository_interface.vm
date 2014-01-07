@@ -1,0 +1,16 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+package ${target.javaPackageFromFolder(${SRC})};
+
+import org.springframework.data.repository.PagingAndSortingRepository;
+import ${ENTITY_PKG}.${beanClass.name};
+#if ( $beanClass.hasCompositePrimaryKey() )
+import ${ENTITY_PKG}.${tools.keyType($entity)};
+#end
+
+/**
+ * Repository : ${beanClass.name}.
+ */
+public interface ${beanClass.name}Repository extends PagingAndSortingRepository<${beanClass.name}, ${tools.keyType($entity)}> {
+
+}

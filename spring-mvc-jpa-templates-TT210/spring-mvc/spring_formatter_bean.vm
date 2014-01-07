@@ -1,0 +1,14 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import org.springframework.stereotype.Component;
+import ${ENTITY_PKG}.${entity.name};
+
+@Component
+public class ${entity.name}Formatter implements Formatter<${entity.name}> {
+
+	@Override
+	public String display(${entity.name} ${entity.name.toLowerCase()}) {
+		return ${entity.name.toLowerCase()}.toString();
+	}
+
+}

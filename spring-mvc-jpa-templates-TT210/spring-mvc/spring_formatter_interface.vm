@@ -1,0 +1,7 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+public interface Formatter<BEAN> {
+	
+	String display(BEAN bean);
+	
+}

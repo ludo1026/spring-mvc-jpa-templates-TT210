@@ -1,0 +1,82 @@
+#set( $tools = $loader.newInstance("Tools") )
+#set( $_ = "$" )
+##--------------------------------------------------------------------------------------------------------
+## Key fields = fields in Primary Key    
+#set( $keyFields = $entity.getAttributesByCriteria( $const.KEY ) )
+##--------------------------------------------------------------------------------------------------------
+## Data fields = fields not in Primary Key and not in selected Links    
+#set( $dataFields = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.NOT_IN_SELECTED_LINKS ) )
+##--------------------------------------------------------------------------------------------------------
+## PRIMARY KEY IN URL
+## keyURLPath
+#set( $keyURLPath = "")
+#if ( $entity.hasCompositePrimaryKey() )
+## FIELDS
+#foreach( $field in $entity.keyAttributes )
+#set( $keyURLPath = $keyURLPath+"/${"+${entity.name.toLowerCase()}+"."+${field.formatedName(0)}+"}" )
+#end
+#else
+#set( $keyURLPath = $keyURLPath+"/${"+${entity.name.toLowerCase()}+"."+${tools.keyName($entity)}+"}" )
+#end
+##--------------------------------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:joda="http://www.joda.org/joda/time/tags" xmlns:s="http://www.springframework.org/tags" xmlns:form="http://www.springframework.org/tags/form" xmlns:util="urn:jsptagdir:/WEB-INF/tags/util" xmlns:display="urn:jsptagdir:/WEB-INF/tags/display" version="2.0">
+<jsp:directive.page contentType="text/html;charset=UTF-8"/>
+<jsp:output omit-xml-declaration="yes"/>
+	<div class="container">
+		<fieldset class="col-sm-12 bordure">
+			<legend class="legende"><s:message code="${entity.name.toLowerCase()}"/></legend>
+		
+			<util:message message="${_}{message}" messages="${_}{messages}" />
+
+			<table class="table table-striped">
+				<thead>
+					<tr>
+## KEYS
+#foreach( $field in $keyFields )
+						<th><s:message code="${entity.name.toLowerCase()}.${field.formatedName(0)}"/></th>
+#end
+## FIELDS
+#foreach( $field in $dataFields )
+						<th><s:message code="${entity.name.toLowerCase()}.${field.formatedName(0)}"/></th>
+#end
+## LINKS
+#foreach( $link in $entity.selectedLinks )
+#if ( $link.isCardinalityOneToOne() || $link.isCardinalityManyToOne() )
+						<th><s:message code="${entity.name.toLowerCase()}.${link.formatedName(0)}"/></th>
+#end
+#end
+						<s:url value="/${entity.name.toLowerCase()}/create" var="url_create" />
+						<th><a class="btn btn-info" href='${_}{url_create}'><s:message code="create"/></a></th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${_}{list${entity.name}s}" var="${entity.name.toLowerCase()}">
+						<tr>
+## KEYS
+#foreach( $field in $keyFields )
+							<td>${_}{${entity.name.toLowerCase()}.${field.formatedName(0)}}</td>
+#end
+## FIELDS
+#foreach( $field in $dataFields )
+#if( $field.formatedType(0) == "Date" ||  $field.formatedType(0) == "Calendar" )
+							<td><display:date value="${_}{${entity.name.toLowerCase()}.${field.formatedName(0)}}" /></td>
+#else
+							<td>${_}{${entity.name.toLowerCase()}.${field.formatedName(0)}}</td>
+#end
+#end
+## LINKS
+#foreach( $link in $entity.selectedLinks )
+#if ( $link.isCardinalityOneToOne() || $link.isCardinalityManyToOne() )
+							<td><s:eval expression="${entity.name.toLowerCase()}.${link.formatedName(0)}" /></td>
+#end
+#end
+							<s:url var="edit${entity.name}Url" value="/${entity.name.toLowerCase()}$keyURLPath"/>
+							<td><a class="btn btn-info" href="${_}{edit${entity.name}Url}"><s:message code="edit"/></a></td>
+						</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+		</fieldset>
+	</div>
+</div>

@@ -1,0 +1,26 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+package ${target.javaPackageFromFolder(${SRC})};
+
+import org.springframework.stereotype.Component;
+import ${ENTITY_PKG}.${beanClass.name};
+#if ( $beanClass.hasCompositePrimaryKey() )
+import ${ENTITY_PKG}.${tools.keyType($entity)};
+#end
+import ${ROOT_PKG}.dao.jpa.${beanClass.name}Dao;
+import ${ROOT_PKG}.dao.jpa.impl.base.DaoImpl;
+
+/**
+ * DAO : ${beanClass.name}.
+ */
+@Component
+public class ${beanClass.name}DaoImpl extends DaoImpl<${beanClass.name}, ${tools.keyType($entity)}> implements ${beanClass.name}Dao {
+
+	/**
+	 * Constructor.
+	 */
+	public ${beanClass.name}DaoImpl() {
+		super(${beanClass.name}.class);
+	}
+
+}
