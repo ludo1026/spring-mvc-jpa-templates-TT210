@@ -1,13 +1,13 @@
 package ${target.javaPackageFromFolder(${TEST_SRC})};
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -16,123 +16,64 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import ${ENTITY_PKG}.${beanClass.name};
-#if ( $beanClass.hasCompositePrimaryKey() )
-import ${ENTITY_PKG}.${beanClass.name}Id;
-#set( $keyType = "${beanClass.name}Id" )
-#set( $keyName = "id" )
-#set( $keySetter = "setId" )
-#set( $keyGetter = "getId" )
-#set( $keyInit = ${keyType}+" "+${keyName}+" = new "+${keyType}+"();" )
-#else
-#foreach( $field in $entity.keyAttributes )
-#set( $keyType = "$field.formatedType(0)" )
-#set( $keyName = "$field.formatedName(0)" )
-#set( $keySetter = "$field.setter" )
-#set( $keyGetter = "$field.getter" )
-#if( $keyType == "String" )
-	#set( $keyInit = ${keyType}+" "+${keyName}+" = ""test"";" )
-#elseif( $keyType == "Integer" || $keyType == "Long" || $keyType == "Double" || $keyType == "Short" || $keyType == "BigDecimal" || $keyType == "BigInteger" )
-	#set( $keyInit = ${keyType}+" "+${keyName}+" = "+${keyType}+".valueOf(""1"");" )
-#else
-	#set( $keyInit = ${keyType}+" "+${keyName}+" = new "+${keyType}+"();" )
+import ${ENTITY_PKG}.${entity.name};
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ENTITY_PKG}.${entity.name}Id;
 #end
-#end
-#end
+import ${ROOT_PKG}.dao.repository.${entity.name}Repository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ${beanClass.name}DaoUnitTest {
+public class ${entity.name}DaoUnitTest {
 
 	@InjectMocks
-	private ${beanClass.name}DaoImpl ${beanClass.name.toLowerCase()}Dao;
+	private ${entity.name}DaoImpl ${entity.name.toLowerCase()}Dao;
+	@Mock
+	private ${entity.name}Repository ${entity.name.toLowerCase()}Repository;
 	@Mock
 	private EntityManager entityManager;
-
+	
 	@Test
-	public void load() {
+	public void findByNamedQuery() {
 		// Given
-		${keyInit}
-
-		${beanClass.name} ${beanClass.name.toLowerCase()} = new ${beanClass.name}();
-		${beanClass.name.toLowerCase()}.${keySetter}(${keyName});
-
-		when(entityManager.find(${beanClass.name}.class, ${keyName})).thenReturn(${beanClass.name.toLowerCase()});
-
-		// When
-		${beanClass.name} ${beanClass.name.toLowerCase()}Result = ${beanClass.name.toLowerCase()}Dao.load(${keyName});
-
-		// Then
-		assertEquals(${keyName}, ${beanClass.name.toLowerCase()}Result.${keyGetter}());
-	}
-
-	@Test
-	public void save() {
-		// Given
-		${beanClass.name} ${beanClass.name.toLowerCase()}ToSave = new ${beanClass.name}();
-		${beanClass.name} ${beanClass.name.toLowerCase()}Saved = new ${beanClass.name}();
-
-		when(entityManager.merge(${beanClass.name.toLowerCase()}ToSave)).thenReturn(${beanClass.name.toLowerCase()}Saved);
-
-		// When
-		${beanClass.name} ${beanClass.name.toLowerCase()}Result = ${beanClass.name.toLowerCase()}Dao.save(${beanClass.name.toLowerCase()}ToSave);
-
-		// Then
-		assertTrue(${beanClass.name.toLowerCase()}Result != ${beanClass.name.toLowerCase()}ToSave);
-		assertTrue(${beanClass.name.toLowerCase()}Result == ${beanClass.name.toLowerCase()}Saved);
-	}
-
-	@Test
-	public void delete() {
-		// Given
-		${keyInit}
-
-		${beanClass.name} ${beanClass.name.toLowerCase()} = new ${beanClass.name}();
-		when(entityManager.find(${beanClass.name}.class, ${keyName})).thenReturn(${beanClass.name.toLowerCase()});
-
-		// When
-		${beanClass.name.toLowerCase()}Dao.delete(${keyName});
-
-		// Then
-		verify(entityManager).remove(${beanClass.name.toLowerCase()});
-	}
-
-	@Test
-	public void loadAll() {
-		// Given
-		List<${beanClass.name}> ${beanClass.name.toLowerCase()}s = new ArrayList<${beanClass.name}>();
-		${beanClass.name.toLowerCase()}s.add(new ${beanClass.name}());
-
+		String queryName = "queryName";
+		
+		List<${entity.name}> ${entity.name.toLowerCase()}s = new ArrayList<${entity.name}>();
+		${entity.name.toLowerCase()}s.add(Mockito.mock(${entity.name}.class));
+		${entity.name.toLowerCase()}s.add(Mockito.mock(${entity.name}.class));
+		
 		Query query = mock(Query.class);
-		when(entityManager.createQuery("from " + ${beanClass.name}.class.getName()))
-				.thenReturn(query);
-
-		when(query.getResultList()).thenReturn(${beanClass.name.toLowerCase()}s);
-
+		when(entityManager.createNamedQuery(queryName)).thenReturn(query);
+		when(query.getResultList()).thenReturn(${entity.name.toLowerCase()}s);
+		
 		// When
-		List<${beanClass.name}> ${beanClass.name.toLowerCase()}sResult = ${beanClass.name.toLowerCase()}Dao.loadAll();
-
+		List<${entity.name}> ${entity.name.toLowerCase()}sResult = ${entity.name.toLowerCase()}Dao.findByNamedQuery(queryName);
+		
 		// Then
-		assertTrue(${beanClass.name.toLowerCase()}sResult == ${beanClass.name.toLowerCase()}s);
+		assertTrue(${entity.name.toLowerCase()}sResult == ${entity.name.toLowerCase()}s);
 	}
 
 	@Test
-	public void search_without_criteria() {
+	public void findByNamedQueryWithParameters() {
 		// Given
-		List<${beanClass.name}> ${beanClass.name.toLowerCase()}s = new ArrayList<${beanClass.name}>();
-		${beanClass.name.toLowerCase()}s.add(new ${beanClass.name}());
-
+		String queryName = "queryName";
+		
+		List<${entity.name}> ${entity.name.toLowerCase()}s = new ArrayList<${entity.name}>();
+		${entity.name.toLowerCase()}s.add(Mockito.mock(${entity.name}.class));
+		${entity.name.toLowerCase()}s.add(Mockito.mock(${entity.name}.class));
+		
 		Query query = mock(Query.class);
-		when(entityManager.createQuery("from " + ${beanClass.name}.class.getName()))
-				.thenReturn(query);
-
-		when(query.getResultList()).thenReturn(${beanClass.name.toLowerCase()}s);
-
+		when(entityManager.createNamedQuery(queryName)).thenReturn(query);
+		when(query.getResultList()).thenReturn(${entity.name.toLowerCase()}s);
+		
+		Map<String, Object> queryParameters = new HashMap<String, Object>();
+		
 		// When
-		List<${beanClass.name}> ${beanClass.name.toLowerCase()}sResult = ${beanClass.name.toLowerCase()}Dao.search(null);
-
+		List<${entity.name}> ${entity.name.toLowerCase()}sResult = ${entity.name.toLowerCase()}Dao.findByNamedQuery(queryName, queryParameters);
+		
 		// Then
-		assertTrue(${beanClass.name.toLowerCase()}sResult == ${beanClass.name.toLowerCase()}s);
+		assertTrue(${entity.name.toLowerCase()}sResult == ${entity.name.toLowerCase()}s);
 	}
-
+	
 }

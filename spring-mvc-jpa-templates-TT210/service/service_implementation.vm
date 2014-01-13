@@ -4,7 +4,6 @@ package ${target.javaPackageFromFolder(${SRC})};
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -12,53 +11,51 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import ${ENTITY_PKG}.${beanClass.name};
-#if ( $beanClass.hasCompositePrimaryKey() )
+import ${ENTITY_PKG}.${entity.name};
+#if ( $entity.hasCompositePrimaryKey() )
 import ${ENTITY_PKG}.${tools.keyType($entity)};
 #end
-import ${ROOT_PKG}.dao.jpa.${beanClass.name}Dao;
-import ${ROOT_PKG}.dao.repository.${beanClass.name}Repository;
-import ${ROOT_PKG}.service.${beanClass.name}Service;
+import ${ROOT_PKG}.dao.jpa.${entity.name}Dao;
+import ${ROOT_PKG}.dao.repository.${entity.name}Repository;
+import ${ROOT_PKG}.service.${entity.name}Service;
 
 /**
- * Service : ${beanClass.name}.
+ * Service : ${entity.name}.
  */
 @Component
 @Transactional
-public class ${beanClass.name}ServiceImpl implements ${beanClass.name}Service {
-		
-	@Resource
-	private ${beanClass.name}Dao ${beanClass.name.toLowerCase()}Dao;
-	@Resource
-	private ${beanClass.name}Repository ${beanClass.name.toLowerCase()}Repository;
+public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 	
-	public ${beanClass.name} load(final ${tools.keyType($entity)} ${tools.keyName($entity)}) {
-		return ${beanClass.name.toLowerCase()}Repository.findOne(${tools.keyName($entity)});
-	}
+	@Resource
+	private ${entity.name}Dao ${entity.name.toLowerCase()}Dao;
+	@Resource
+	private ${entity.name}Repository ${entity.name.toLowerCase()}Repository;
 	
-	public ${beanClass.name} save(final ${beanClass.name} ${beanClass.name.toLowerCase()}) {
-		return ${beanClass.name.toLowerCase()}Repository.save(${beanClass.name.toLowerCase()});
-	}
-
-	public void delete(final ${tools.keyType($entity)} ${tools.keyName($entity)}) {
-		${beanClass.name.toLowerCase()}Repository.delete(${tools.keyName($entity)});
-	}
-
-	public List<${beanClass.name}> search(final Map<String,Object> criteria) {
-		return ${beanClass.name.toLowerCase()}Dao.search(criteria);
-	}
-
-	public List<${beanClass.name}> loadAll() {
-		List<${beanClass.name}> ${beanClass.name.toLowerCase()}s = new ArrayList<${beanClass.name}>();
-		for (${beanClass.name} ${beanClass.name.toLowerCase()} : ${beanClass.name.toLowerCase()}Repository.findAll()) {
-			${beanClass.name.toLowerCase()}s.add(${beanClass.name.toLowerCase()});
-		}
-		return ${beanClass.name.toLowerCase()}s;
+	@Transactional(readOnly=true)
+	public ${entity.name} findById(final ${tools.keyType($entity)} ${tools.keyName($entity)}) {
+		return ${entity.name.toLowerCase()}Repository.findOne(${tools.keyName($entity)});
 	}
 	
 	@Transactional(readOnly=true)
-	public Page<${beanClass.name}> findAllByPage(Pageable pageable) {
-		return ${beanClass.name.toLowerCase()}Repository.findAll(pageable);
+	public List<${entity.name}> findAll() {
+		List<${entity.name}> ${entity.name.toLowerCase()}s = new ArrayList<${entity.name}>();
+		for (${entity.name} ${entity.name.toLowerCase()} : ${entity.name.toLowerCase()}Repository.findAll()) {
+			${entity.name.toLowerCase()}s.add(${entity.name.toLowerCase()});
+		}
+		return ${entity.name.toLowerCase()}s;
 	}
 	
+	@Transactional(readOnly=true)
+	public Page<${entity.name}> findAllByPage(Pageable pageable) {
+		return ${entity.name.toLowerCase()}Repository.findAll(pageable);
+	}
+	
+	public ${entity.name} save(final ${entity.name} ${entity.name.toLowerCase()}) {
+		return ${entity.name.toLowerCase()}Repository.save(${entity.name.toLowerCase()});
+	}
+
+	public void delete(final ${tools.keyType($entity)} ${tools.keyName($entity)}) {
+		${entity.name.toLowerCase()}Repository.delete(${tools.keyName($entity)});
+	}
+
 }

@@ -1,0 +1,3 @@
+#set( $tools = $loader.newInstance("Tools") )
+
+$tools.toto($model, $selectedEntities)

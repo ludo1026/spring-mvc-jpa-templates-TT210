@@ -4,10 +4,10 @@ import javax.annotation.Resource;
 
 import org.junit.Assert;
 import org.junit.Test;
-import ${ENTITY_PKG}.${beanClass.name};
-#if ( $beanClass.hasCompositePrimaryKey() )
-import ${ENTITY_PKG}.${beanClass.name}Id;
-#set( $keyType = "${beanClass.name}Id" )
+import ${ENTITY_PKG}.${entity.name};
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ENTITY_PKG}.${entity.name}Id;
+#set( $keyType = "${entity.name}Id" )
 #set( $keyName = "id" )
 #set( $keyGetter = "getId" )
 #set( $keySetter = "setId" )
@@ -30,7 +30,7 @@ import ${ENTITY_PKG}.${beanClass.name}Id;
 
 import ${ROOT_PKG}.test.common.AbstractRealDBTest;
 
-public class ${beanClass.name}ServiceRealDBIntegTest extends AbstractRealDBTest {
+public class ${entity.name}ServiceRealDBIntegTest extends AbstractRealDBTest {
 
 	@Override
 	protected String getDataFilename() {
@@ -38,38 +38,38 @@ public class ${beanClass.name}ServiceRealDBIntegTest extends AbstractRealDBTest 
 	}
 
 	@Resource
-	private ${beanClass.name}Service ${beanClass.name.toLowerCase()}Service;
+	private ${entity.name}Service ${entity.name.toLowerCase()}Service;
 
 	@Test
 	public void cycle_vie_complet() {
 
 		${keyInit}
 
-		${beanClass.name} ${beanClass.name.toLowerCase()} = new ${beanClass.name}();
-		${beanClass.name.toLowerCase()}.${keySetter}(${keyName});
-		//${beanClass.name.toLowerCase()}.setName("Test " + ${keyName});
+		${entity.name} ${entity.name.toLowerCase()} = new ${entity.name}();
+		${entity.name.toLowerCase()}.${keySetter}(${keyName});
+		//${entity.name.toLowerCase()}.setName("Test " + ${keyName});
 
 		// Create
-		this.${beanClass.name.toLowerCase()}Service.save(${beanClass.name.toLowerCase()});
+		this.${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
 
 		// Search
-		${beanClass.name.toLowerCase()} = this.${beanClass.name.toLowerCase()}Service.load(${keyName});
-		Assert.assertNotNull(${beanClass.name.toLowerCase()});
+		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.load(${keyName});
+		Assert.assertNotNull(${entity.name.toLowerCase()});
 
 		// Update
-		//${beanClass.name.toLowerCase()}.setName("Test 2 " + ${keyName});
-		${beanClass.name.toLowerCase()} = this.${beanClass.name.toLowerCase()}Service.save(${beanClass.name.toLowerCase()});
+		//${entity.name.toLowerCase()}.setName("Test 2 " + ${keyName});
+		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
 
 		// Search
-		${beanClass.name.toLowerCase()} = this.${beanClass.name.toLowerCase()}Service.load(${keyName});
-		//Assert.assertEquals("Test 2 " + ${keyName}, ${beanClass.name.toLowerCase()}.getName());
+		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.load(${keyName});
+		//Assert.assertEquals("Test 2 " + ${keyName}, ${entity.name.toLowerCase()}.getName());
 
 		// Delete
-		this.${beanClass.name.toLowerCase()}Service.delete(${beanClass.name.toLowerCase()}.${keyGetter}());
+		this.${entity.name.toLowerCase()}Service.delete(${entity.name.toLowerCase()}.${keyGetter}());
 
 		// Search
-		${beanClass.name.toLowerCase()} = this.${beanClass.name.toLowerCase()}Service.load(${keyName});
-		Assert.assertNull(${beanClass.name.toLowerCase()});
+		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.load(${keyName});
+		Assert.assertNull(${entity.name.toLowerCase()});
 	}
 
 }

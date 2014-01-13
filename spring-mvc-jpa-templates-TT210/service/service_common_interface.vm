@@ -16,17 +16,24 @@ import org.springframework.data.domain.Pageable;
 public interface Service<T extends Serializable, ID extends Serializable> {
 
 	/**
-	 * Load all entities.
-	 * @return all entities
-	 */
-	List<T> loadAll();
-
-	/**
 	 * Load entity
 	 * @param id
 	 * @return entity
 	 */
-	T load(final ID id) ;
+	T findById(final ID id) ;
+
+	/**
+	 * Load all entities.
+	 * @return all entities
+	 */
+	List<T> findAll();
+
+	/**
+	 * Load entities
+	 * @param pageable Pagination
+	 * @return entities
+	 */
+	public Page<T> findAllByPage(Pageable pageable);
 
 	/**
 	 * Save entity
@@ -40,14 +47,5 @@ public interface Service<T extends Serializable, ID extends Serializable> {
 	 * @param id
 	 */
 	void delete(final ID id);
-
-	/**
-	 * Search entity
-	 * @param criteria
-	 * @return list entities
-	 */
-	List<T> search(final Map<String,Object> criteria);
-
-	public Page<T> findAllByPage(Pageable pageable);
 
 }

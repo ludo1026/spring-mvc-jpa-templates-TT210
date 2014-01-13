@@ -80,7 +80,7 @@ public class ${entity.name}Controller extends AbstractController
 
 	@RequestMapping()
 	public String list(Model uiModel) {
-		List<${entity.name}> list = ${entity.name.toLowerCase()}Service.loadAll();
+		List<${entity.name}> list = ${entity.name.toLowerCase()}Service.findAll();
 		uiModel.addAttribute("list${entity.name}s", list);
 		return "${entity.name.toLowerCase()}/list";
 	}
@@ -91,7 +91,7 @@ public class ${entity.name}Controller extends AbstractController
 ## Lien vers les entités
 #foreach( $link in $entity.selectedLinks )
 #if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
-    	uiModel.addAttribute("${link.targetEntityType.toLowerCase()}s", ${link.targetEntityType.toLowerCase()}Service.loadAll());
+    	uiModel.addAttribute("${link.targetEntityType.toLowerCase()}s", ${link.targetEntityType.toLowerCase()}Service.findAll());
 #end
 #end
 	}
@@ -109,9 +109,9 @@ public class ${entity.name}Controller extends AbstractController
 #foreach( $field in $entity.keyAttributes )
 		${tools.keyType($entity).toLowerCase()}.${field.setter}(${field.formatedName(0)});
 #end
-		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.load(${tools.keyType($entity).toLowerCase()});
+		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.findById(${tools.keyType($entity).toLowerCase()});
 #else
-		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.load(${tools.keyName($entity)});
+		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.findById(${tools.keyName($entity)});
 #end
 		this.populateForm(uiModel, ${entity.name.toLowerCase()});
 		return "${entity.name.toLowerCase()}/edit";
@@ -122,7 +122,7 @@ public class ${entity.name}Controller extends AbstractController
 		try {
 #if( ! $tools.hasGeneratedValue( $entity, $entity.keyAttributes ) )
 			if (!result.hasErrors()) {
-				if(${entity.name.toLowerCase()}Service.load(${entity.name.toLowerCase()}.${tools.keyGetter($entity)}()) != null) {
+				if(${entity.name.toLowerCase()}Service.findById(${entity.name.toLowerCase()}.${tools.keyGetter($entity)}()) != null) {
 					result.addError(new ObjectError("${entity.name.toLowerCase()}", "already.exists"));
 				}
 			}

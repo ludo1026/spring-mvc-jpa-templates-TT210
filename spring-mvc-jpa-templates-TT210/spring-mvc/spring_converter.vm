@@ -89,7 +89,7 @@ public class ApplicationConversionServiceFactoryBean extends FormattingConversio
     public Converter<${tools.keyType($entity)}, ${entity.name}> getIdTo${entity.name}Converter() {
         return new Converter<${tools.keyType($entity)}, ${entity.name}>() {
             public ${entity.name} convert(${tools.keyType($entity)} ${tools.keyName($entity)}) {
-                return ${entity.name.toLowerCase()}Service.load(${tools.keyName($entity)});
+                return ${entity.name.toLowerCase()}Service.findById(${tools.keyName($entity)});
             }
         };
     }

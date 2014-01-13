@@ -2,25 +2,24 @@
 ##--------------------------------------------------------------------------------------------------------
 package ${target.javaPackageFromFolder(${SRC})};
 
+import javax.annotation.Resource;
+
 import org.springframework.stereotype.Component;
-import ${ENTITY_PKG}.${beanClass.name};
-#if ( $beanClass.hasCompositePrimaryKey() )
-import ${ENTITY_PKG}.${tools.keyType($entity)};
+import ${ENTITY_PKG}.${entity.name};
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ENTITY_PKG}.${entity.name}Id;
 #end
-import ${ROOT_PKG}.dao.jpa.${beanClass.name}Dao;
+import ${ROOT_PKG}.dao.jpa.${entity.name}Dao;
 import ${ROOT_PKG}.dao.jpa.impl.base.DaoImpl;
+import ${ROOT_PKG}.dao.repository.${entity.name}Repository;
 
 /**
- * DAO : ${beanClass.name}.
+ * DAO : ${entity.name}.
  */
 @Component
-public class ${beanClass.name}DaoImpl extends DaoImpl<${beanClass.name}, ${tools.keyType($entity)}> implements ${beanClass.name}Dao {
+public class ${entity.name}DaoImpl extends DaoImpl<${entity.name}, ${tools.keyType($entity)}> implements ${entity.name}Dao {
 
-	/**
-	 * Constructor.
-	 */
-	public ${beanClass.name}DaoImpl() {
-		super(${beanClass.name}.class);
-	}
-
+	@Resource
+	private ${entity.name}Repository ${entity.name.toLowerCase()}Repository;
+	
 }

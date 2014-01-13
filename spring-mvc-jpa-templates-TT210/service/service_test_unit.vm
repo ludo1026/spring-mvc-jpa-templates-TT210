@@ -15,10 +15,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import ${ENTITY_PKG}.${beanClass.name};
-#if ( $beanClass.hasCompositePrimaryKey() )
-import ${ENTITY_PKG}.${beanClass.name}Id;
-#set( $keyType = "${beanClass.name}Id" )
+import ${ENTITY_PKG}.${entity.name};
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ENTITY_PKG}.${entity.name}Id;
+#set( $keyType = "${entity.name}Id" )
 #set( $keyName = "id" )
 #set( $keyGetter = "getId" )
 #set( $keySetter = "setId" )
@@ -38,47 +38,65 @@ import ${ENTITY_PKG}.${beanClass.name}Id;
 #end
 #end
 #end
-import ${ROOT_PKG}.dao.jpa.${beanClass.name}Dao;
+import ${ROOT_PKG}.dao.jpa.${entity.name}Dao;
+import ${ROOT_PKG}.dao.repository.${entity.name}Repository;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ${beanClass.name}ServiceImplUnitTest {
+public class ${entity.name}ServiceImplUnitTest {
 	
 	@InjectMocks
-	private ${beanClass.name}ServiceImpl ${beanClass.name.toLowerCase()}Service;
+	private ${entity.name}ServiceImpl ${entity.name.toLowerCase()}Service;
 	@Mock
-	private ${beanClass.name}Dao ${beanClass.name.toLowerCase()}Dao;
+	private ${entity.name}Dao ${entity.name.toLowerCase()}Dao;
+	@Mock
+	private ${entity.name}Repository ${entity.name.toLowerCase()}Repository;
 	
 	@Test
-	public void load() {
+	public void find() {
 		// Given
 		${keyInit}
 
-		${beanClass.name} ${beanClass.name.toLowerCase()} = new ${beanClass.name}();
-		${beanClass.name.toLowerCase()}.${keySetter}(${keyName});
+		${entity.name} ${entity.name.toLowerCase()} = new ${entity.name}();
+		${entity.name.toLowerCase()}.${keySetter}(${keyName});
 		
-		when(${beanClass.name.toLowerCase()}Dao.load(${keyName})).thenReturn(${beanClass.name.toLowerCase()});
+		when(${entity.name.toLowerCase()}Repository.findOne(${keyName})).thenReturn(${entity.name.toLowerCase()});
 
 		// When
-		${beanClass.name} ${beanClass.name.toLowerCase()}Result = ${beanClass.name.toLowerCase()}Service.load(${keyName});
+		${entity.name} ${entity.name.toLowerCase()}Result = ${entity.name.toLowerCase()}Service.findById(${keyName});
 		
 		// Then
-		assertEquals(${keyName}, ${beanClass.name.toLowerCase()}Result.${keyGetter}());
+		assertEquals(${keyName}, ${entity.name.toLowerCase()}Result.${keyGetter}());
+	}
+
+	@Test
+	public void findAll() {
+		// Given
+		List<${entity.name}> ${entity.name.toLowerCase()}s = new ArrayList<${entity.name}>();
+		${entity.name.toLowerCase()}s.add(new ${entity.name}());
+		
+		when(${entity.name.toLowerCase()}Repository.findAll()).thenReturn(${entity.name.toLowerCase()}s);
+		
+		// When
+		List<${entity.name}> ${entity.name.toLowerCase()}sResult = ${entity.name.toLowerCase()}Service.findAll();
+		
+		// Then
+		assertEquals(${entity.name.toLowerCase()}s.size(), ${entity.name.toLowerCase()}sResult.size());
 	}
 	
 	@Test
 	public void save() {
 		// Given
-		${beanClass.name} ${beanClass.name.toLowerCase()}ToSave = new ${beanClass.name}();
-		${beanClass.name} ${beanClass.name.toLowerCase()}Saved = new ${beanClass.name}();
+		${entity.name} ${entity.name.toLowerCase()}ToSave = new ${entity.name}();
+		${entity.name} ${entity.name.toLowerCase()}Saved = new ${entity.name}();
 		
-		when(${beanClass.name.toLowerCase()}Dao.save(${beanClass.name.toLowerCase()}ToSave)).thenReturn(${beanClass.name.toLowerCase()}Saved);
+		when(${entity.name.toLowerCase()}Repository.save(${entity.name.toLowerCase()}ToSave)).thenReturn(${entity.name.toLowerCase()}Saved);
 
 		// When
-		${beanClass.name} ${beanClass.name.toLowerCase()}Result = ${beanClass.name.toLowerCase()}Service.save(${beanClass.name.toLowerCase()}ToSave);
+		${entity.name} ${entity.name.toLowerCase()}Result = ${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()}ToSave);
 		
 		// Then
-		assertTrue(${beanClass.name.toLowerCase()}Result != ${beanClass.name.toLowerCase()}ToSave);
-		assertTrue(${beanClass.name.toLowerCase()}Result == ${beanClass.name.toLowerCase()}Saved);
+		assertTrue(${entity.name.toLowerCase()}Result != ${entity.name.toLowerCase()}ToSave);
+		assertTrue(${entity.name.toLowerCase()}Result == ${entity.name.toLowerCase()}Saved);
 	}
 
 	@Test
@@ -87,42 +105,10 @@ public class ${beanClass.name}ServiceImplUnitTest {
 		${keyInit}
 		
 		// When
-		${beanClass.name.toLowerCase()}Service.delete(${keyName});
+		${entity.name.toLowerCase()}Service.delete(${keyName});
 		
 		// Then
-		verify(${beanClass.name.toLowerCase()}Dao).delete(${keyName});
-	}
-
-	@Test
-	public void search() {
-		// Given
-		Map<String,Object> criteria = new HashMap<String,Object>();
-		
-		List<${beanClass.name}> ${beanClass.name.toLowerCase()}s = new ArrayList<${beanClass.name}>();
-		${beanClass.name.toLowerCase()}s.add(new ${beanClass.name}());
-		
-		when(${beanClass.name.toLowerCase()}Dao.search(criteria)).thenReturn(${beanClass.name.toLowerCase()}s);
-		
-		// When
-		List<${beanClass.name}> ${beanClass.name.toLowerCase()}sResult = ${beanClass.name.toLowerCase()}Service.search(criteria);
-		
-		// Then
-		assertTrue(${beanClass.name.toLowerCase()}sResult == ${beanClass.name.toLowerCase()}s);
-	}
-
-	@Test
-	public void loadAll() {
-		// Given
-		List<${beanClass.name}> ${beanClass.name.toLowerCase()}s = new ArrayList<${beanClass.name}>();
-		${beanClass.name.toLowerCase()}s.add(new ${beanClass.name}());
-		
-		when(${beanClass.name.toLowerCase()}Dao.loadAll()).thenReturn(${beanClass.name.toLowerCase()}s);
-		
-		// When
-		List<${beanClass.name}> ${beanClass.name.toLowerCase()}sResult = ${beanClass.name.toLowerCase()}Service.loadAll();
-		
-		// Then
-		assertTrue(${beanClass.name.toLowerCase()}sResult == ${beanClass.name.toLowerCase()}s);
+		verify(${entity.name.toLowerCase()}Repository).delete(${keyName});
 	}
 	
 }
