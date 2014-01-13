@@ -173,13 +173,7 @@ $jpa.linkAnnotations(4, $link, $allMappedFields )
     //----------------------------------------------------------------------
     // toString METHOD
     //----------------------------------------------------------------------
-    public String toString()
-    {
 #set( $attributes = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.NOT_TEXT, $const.NOT_IN_SELECTED_LINKS ) )    
-$entity.toStringMethodCodeLinesWithKey(8, $attributes, "id") 
-#foreach( $field in $entity.getAttributesByCriteria( $const.TEXT ) )
-		// $field.name is not in toString because it's a "long text" field
-#end  
-    }
+$java.toStringMethod($entity, $attributes, "id", 4) 
 
 }
