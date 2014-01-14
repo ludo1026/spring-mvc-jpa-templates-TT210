@@ -1,3 +1,5 @@
+#set( $entityIdName = ${entity.name}+"Id" )
+##-------------------------------------------------------------------------------------------------
 package ${target.javaPackageFromFolder($SRC)};
 
 import java.io.Serializable;
@@ -18,7 +20,7 @@ import $import;
  *
  */
 @Embeddable
-public class ${entity.name}Id implements Serializable
+public class $entityIdName implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
@@ -35,12 +37,12 @@ $beanValidation.annotations(4, $field)
     //----------------------------------------------------------------------
     // CONSTRUCTORS
     //----------------------------------------------------------------------
-    public ${entity.name}()
+    public $entityIdName()
     {
         super();
     }
 
-    public ${entity.name}Id( $fn.argumentsListWithType($entity.keyAttributes) )
+    public $entityIdName( $fn.argumentsListWithType($entity.keyAttributes) )
     {
         super();
 #foreach( $field in $entity.keyAttributes )
@@ -70,12 +72,12 @@ $beanValidation.annotations(4, $field)
     //----------------------------------------------------------------------
     // equals METHOD
     //----------------------------------------------------------------------
-$java.equalsMethod(${entity.name}, $entity.keyAttributes )
+$java.equalsMethod(${entityIdName}, $entity.keyAttributes )
 
     //----------------------------------------------------------------------
     // hashCode METHOD
     //----------------------------------------------------------------------
-$java.hashCodeMethod(${entity.name}, $entity.keyAttributes )
+$java.hashCodeMethod(${entityIdName}, $entity.keyAttributes )
 
     //----------------------------------------------------------------------
     // toString METHOD
