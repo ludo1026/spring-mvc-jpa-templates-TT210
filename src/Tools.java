@@ -4,46 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.telosys.tools.commons.variables.Variable;
 import org.telosys.tools.generator.context.JavaBeanClass;
 import org.telosys.tools.generator.context.JavaBeanClassAttribute;
 import org.telosys.tools.generator.context.JavaBeanClassForeignKey;
 import org.telosys.tools.generator.context.JavaBeanClassForeignKeyColumn;
 import org.telosys.tools.generator.context.JavaBeanClassLink;
-import org.telosys.tools.generator.context.ProjectInContext;
 
 public class Tools {
 
-	/**
-	 * Get variable form project configuration. 
-	 * @param projectConfiguration Project configuration
-	 * @param variableName Variable name
-	 * @return Variable
-	 */
-	public Variable getVariable(ProjectInContext projectConfiguration, String variableName) {
-		for(Variable variable : projectConfiguration.getAllVariables()) {
-			if(variable.getName().equalsIgnoreCase(variableName)) {
-				return variable;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Get variable valeu from project configuration
-	 * @param projectConfiguration Project configuration
-	 * @param variableName Variable name
-	 * @return Variable value
-	 */
-	public String getVariableValue(ProjectInContext projectConfiguration, String variableName) {
-		Variable variable = getVariable(projectConfiguration, variableName);
-		if(variable == null) {
-			return "";
-		} else {
-			return variable.getValue();
-		}
-	}
-	
 	/**
 	 * Indicates if the attribute type is text
 	 * @param attribute Attribute
@@ -73,7 +41,7 @@ public class Tools {
 		String[] types = {"Date","Calendar"};
 		return Arrays.asList(types).contains(attribute.getWrapperType());
 	}
-	
+
 	/**
 	 * Get entity key attribute.
 	 * @param entity Entity
@@ -144,49 +112,6 @@ public class Tools {
 		}
 	}
 	
-	/**
-	 * Indicates if the primary key is an auto-generated value.
-	 * @param entity Entity
-	 * @param field Key attribute
-	 * @return boolean
-	 */
-	public boolean isGeneratedValue( JavaBeanClass entity, JavaBeanClassAttribute field) {
-		boolean isGeneratedValue = false;
-		if( field.isKeyElement() ) {
-			if( ! field.isUsedInLinkJoinColumn(entity.getLinks()) ) {
-				if( field.isAutoIncremented() || field.isGeneratedValue() ) {
-					isGeneratedValue = true;
-				}
-				if( field.formatedType(0).equals("Integer")
-				 || field.formatedType(0).equals("Short")
-				 || field.formatedType(0).equals("Long")
-				 || field.formatedType(0).equals("Double")
-				 || field.formatedType(0).equals("BigInteger")
-				 || field.formatedType(0).equals("BigDecimal") ) 
-				{
-					isGeneratedValue = true;
-				}
-			}
-		}
-		return isGeneratedValue;
-	}
-	
-	/**
-	 * Indicates if one of these key attributes is an auto-generated value.
-	 * @param entity Entity
-	 * @param fields Key attributes
-	 * @return boolean
-	 */
-	public boolean hasGeneratedValue( JavaBeanClass entity, List<JavaBeanClassAttribute> fields) {
-		boolean hasGeneratedValue = false;
-		for( JavaBeanClassAttribute field : fields ) {
-			if( isGeneratedValue( entity, field ) ) {
-				hasGeneratedValue = true;
-			}
-		}
-		return hasGeneratedValue;
-	}
-
 	/**
 	 * Indique si le champ est utilisé par un des liens.
 	 * @param attribute Champ

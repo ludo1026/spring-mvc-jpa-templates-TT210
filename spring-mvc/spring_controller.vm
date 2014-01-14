@@ -120,13 +120,6 @@ public class ${entity.name}Controller extends AbstractController
 	@RequestMapping(method = RequestMethod.POST)
 	public String create(@Valid ${entity.name} ${entity.name.toLowerCase()}, BindingResult result, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		try {
-#if( ! $tools.hasGeneratedValue( $entity, $entity.keyAttributes ) )
-			if (!result.hasErrors()) {
-				if(${entity.name.toLowerCase()}Service.findById(${entity.name.toLowerCase()}.${tools.keyGetter($entity)}()) != null) {
-					result.addError(new ObjectError("${entity.name.toLowerCase()}", "already.exists"));
-				}
-			}
-#end
 			if (!result.hasErrors()) {
 				${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
 				messageHelper.addMessage(redirectAttributes, new Message(TypeMessage.SUCCESS,"save.ok"));

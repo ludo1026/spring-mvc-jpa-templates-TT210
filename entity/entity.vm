@@ -52,12 +52,6 @@ public class $entity.name implements Serializable
     //----------------------------------------------------------------------
 #foreach( $field in $entity.keyAttributes )
 $jpa.fieldAnnotations(4,$field)
-## add @GeneratedValue if the database doesn't have auto-incremented columns
-#if( ! $field.isAutoIncremented() && ! $field.isGeneratedValue() )
-#if( $tools.isGeneratedValue( $entity, $field ) )
-	@GeneratedValue
-#end
-#end
 $beanValidation.annotations(4,$field)
     private $field.formatedType(0) $field.formatedName(0)#if($field.hasInitialValue()) = ${field.initialValue} #end;
 #end

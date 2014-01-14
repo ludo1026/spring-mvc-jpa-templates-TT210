@@ -41,7 +41,7 @@
 ## KEY
 #foreach( $field in $keyFields )
 #if( ! $field.isUsedInLinkJoinColumn($entity.links) )
-#if( ! $tools.isGeneratedValue( $entity, $field ) )
+#if( ! $field.isGeneratedValue() )
 				<div class="form-group">
 					<label for="${field.formatedName(0)}" class="col-sm-2 control-label"><s:message code="${entity.name.toLowerCase()}.${field.formatedName(0)}"/></label>
 					<div class="col-sm-10">

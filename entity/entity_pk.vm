@@ -1,6 +1,5 @@
 package ${target.javaPackageFromFolder($SRC)};
 
-#set( $currentClassName = "${entity.name}Id" )
 import java.io.Serializable;
 
 import javax.validation.constraints.* ;
@@ -19,7 +18,7 @@ import $import;
  *
  */
 @Embeddable
-public class $currentClassName implements Serializable
+public class ${entity.name}Id implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
