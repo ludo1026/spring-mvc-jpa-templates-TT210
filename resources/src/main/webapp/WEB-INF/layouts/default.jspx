@@ -10,11 +10,13 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="cache-control" content="no-cache" />
+
 	<!-- Get the user locale from the page context (it was set by Spring MVC's locale resolver) -->
+	<c:set var="plocale">${pageContext.response.locale}</c:set>
 	<c:set var="userLocale">
-		<c:set var="plocale">${pageContext.response.locale}</c:set>
 		<c:out value="${fn:replace(plocale, '_', '-')}" default="en" />
 	</c:set>
+
 	<spring:message code="application_name" var="app_name" htmlEscape="false" />
 	<title><c:out value="${app_name}" /></title>
 
@@ -33,7 +35,7 @@
 	<spring:url value="/js/jquery-1.10.2.min.js" var="js_url_jquery" />
 	<spring:url value="/js/bootstrap.js" var="js_url_bootstrap" />
 	<spring:url value="/js/bootstrap-datepicker.js" var="js_url_bootstrap_datepicker" />
-	<spring:url value="/js/locales/bootstrap-datepicker.${fn:substring(pageContext.response.locale, 0, 2)}.js" var="js_url_bootstrap_datepicker_locale" />
+	<spring:url value="/js/locales/bootstrap-datepicker.${fn:substring(plocale, 0, 2)}.js" var="js_url_bootstrap_datepicker_locale" />
 	<script type="text/javascript" src="${js_url_validation}"><jsp:text/></script>
 	<script type="text/javascript" src="${js_url_jquery}"><jsp:text/></script>
 	<script type="text/javascript" src="${js_url_bootstrap}"><jsp:text/></script>
