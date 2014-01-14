@@ -20,7 +20,9 @@ package ${target.javaPackageFromFolder($SRC)};
 
 import java.io.Serializable;
 
+#if ( $entity.hasCompositePrimaryKey() )
 import javax.validation.Valid;
+#end
 import javax.validation.constraints.*;
 
 #foreach( $import in $java.imports($entity) )
