@@ -35,7 +35,7 @@ $beanValidation.annotations(4, $field)
     //----------------------------------------------------------------------
     // CONSTRUCTORS
     //----------------------------------------------------------------------
-    public $currentClassName()
+    public ${entity.name}()
     {
         super();
     }
@@ -70,12 +70,12 @@ $beanValidation.annotations(4, $field)
     //----------------------------------------------------------------------
     // equals METHOD
     //----------------------------------------------------------------------
-$java.equalsMethod($currentClassName, $entity.keyAttributes )
+$java.equalsMethod(${entity.name}, $entity.keyAttributes )
 
     //----------------------------------------------------------------------
     // hashCode METHOD
     //----------------------------------------------------------------------
-$java.hashCodeMethod($currentClassName, $entity.keyAttributes )
+$java.hashCodeMethod(${entity.name}, $entity.keyAttributes )
 
     //----------------------------------------------------------------------
     // toString METHOD
