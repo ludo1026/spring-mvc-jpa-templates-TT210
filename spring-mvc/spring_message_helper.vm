@@ -13,9 +13,9 @@ import ${ROOT_PKG}.web.bean.TypeMessage;
 @Component
 public class MessageHelper {
 	
-	public void addException(Model uiModel, Exception e) {
+	public void addException(Model uiModel, String messageKey, Exception e) {
 		List<Message> messages = getMessages(uiModel);
-		addException(messages, e);
+		addException(messages, messageKey, e);
 	}
 	
 	public void addException(RedirectAttributes redirectAttributes, String messageKey, Exception e) {

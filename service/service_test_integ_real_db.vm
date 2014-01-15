@@ -53,7 +53,7 @@ public class ${entity.name}ServiceRealDBIntegTest extends AbstractRealDBTest {
 		this.${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
 
 		// Search
-		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.load(${keyName});
+		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.findById(${keyName});
 		Assert.assertNotNull(${entity.name.toLowerCase()});
 
 		// Update
@@ -61,14 +61,14 @@ public class ${entity.name}ServiceRealDBIntegTest extends AbstractRealDBTest {
 		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
 
 		// Search
-		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.load(${keyName});
+		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.findById(${keyName});
 		//Assert.assertEquals("Test 2 " + ${keyName}, ${entity.name.toLowerCase()}.getName());
 
 		// Delete
 		this.${entity.name.toLowerCase()}Service.delete(${entity.name.toLowerCase()}.${keyGetter}());
 
 		// Search
-		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.load(${keyName});
+		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.findById(${keyName});
 		Assert.assertNull(${entity.name.toLowerCase()});
 	}
 

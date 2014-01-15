@@ -129,7 +129,7 @@ public class ${entity.name}Controller extends AbstractController
 				return "${entity.name.toLowerCase()}/create";
 			}
 		} catch(Exception e) {
-			messageHelper.addException(redirectAttributes, "${entity.name.toLowerCase()}.error.create", e);
+			messageHelper.addException(uiModel, "${entity.name.toLowerCase()}.error.create", e);
 			populateForm(uiModel, ${entity.name.toLowerCase()});
 			return "${entity.name.toLowerCase()}/create";
 		}
@@ -147,7 +147,7 @@ public class ${entity.name}Controller extends AbstractController
 				return "${entity.name.toLowerCase()}/edit";
 			}
 		} catch(Exception e) {
-			messageHelper.addException(redirectAttributes, "${entity.name.toLowerCase()}.error.update", e);
+			messageHelper.addException(uiModel, "${entity.name.toLowerCase()}.error.update", e);
 			populateForm(uiModel, ${entity.name.toLowerCase()});
 			return "${entity.name.toLowerCase()}/edit";
 		}
