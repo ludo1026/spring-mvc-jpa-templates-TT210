@@ -25,20 +25,20 @@ import org.springframework.ui.Model;
 public class ${entity.name}ListViewManagerImpl extends AbstractViewManager implements ${entity.name}ListViewManager {
 	
 	@Resource
-	private ${entity.name}Service ${entity.name.toLowerCase()}Service;
+	private ${entity.name}Service ${tools.uncapitalize($entity.name)}Service;
 	
 	@Override
 	public void list(Model model) {
-		List<${entity.name}> ${entity.name.toLowerCase()}s = ${entity.name.toLowerCase()}Service.findAll();
+		List<${entity.name}> ${tools.uncapitalize($entity.name)}s = ${tools.uncapitalize($entity.name)}Service.findAll();
 		
-		List<${entity.name}ListViewModel> ${entity.name.toLowerCase()}ListViewModels = modelMapperHelper.map(${entity.name.toLowerCase()}s, ${entity.name}ListViewModel.class);
+		List<${entity.name}ListViewModel> ${tools.uncapitalize($entity.name)}ListViewModels = modelMapperHelper.map(${tools.uncapitalize($entity.name)}s, ${entity.name}ListViewModel.class);
 		
-		model.addAttribute("list${entity.name}s", ${entity.name.toLowerCase()}ListViewModels);
+		model.addAttribute("list${entity.name}s", ${tools.uncapitalize($entity.name)}ListViewModels);
 	}
 
 	@Override
 	public void delete(${tools.keyType($entity)} ${tools.keyName($entity)}) {
-		${entity.name.toLowerCase()}Service.delete(${tools.keyName($entity)});
+		${tools.uncapitalize($entity.name)}Service.delete(${tools.keyName($entity)});
 	}
 	
 }

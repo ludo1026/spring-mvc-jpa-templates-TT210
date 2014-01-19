@@ -1,3 +1,5 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
 package ${target.javaPackageFromFolder(${SRC})};
 
 import javax.annotation.Resource;
@@ -15,7 +17,7 @@ public class ModelMapperFactoryBean implements FactoryBean<ModelMapper> {
 
 #foreach( $entity in $selectedEntities )
 	@Resource
-	private ${entity.name}ItemMap ${entity.name.toLowerCase()}ItemMap;
+	private ${entity.name}ItemMap ${tools.uncapitalize($entity.name)}ItemMap;
 	@Resource
 	private Item${entity.name}Map item${entity.name}Map;
 #end
@@ -25,7 +27,7 @@ public class ModelMapperFactoryBean implements FactoryBean<ModelMapper> {
 		ModelMapper modelMapper = new ModelMapper();
 
 #foreach( $entity in $selectedEntities )
-		modelMapper.addConverter(${entity.name.toLowerCase()}ItemMap);
+		modelMapper.addConverter(${tools.uncapitalize($entity.name)}ItemMap);
 		modelMapper.addConverter(item${entity.name}Map);
 
 #end

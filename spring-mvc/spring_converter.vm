@@ -31,7 +31,7 @@ public class ApplicationConversionServiceFactoryBean extends FormattingConversio
 
 #foreach( $entity in $selectedEntities )
 	@Resource
-	private ${entity.name}Formatter ${entity.name.toLowerCase()}Formatter;
+	private ${entity.name}Formatter ${tools.uncapitalize($entity.name)}Formatter;
 #end
 	
 	public void afterPropertiesSet() {
@@ -66,12 +66,12 @@ public class ApplicationConversionServiceFactoryBean extends FormattingConversio
     
 #foreach( $entity in $selectedEntities )
 	@Resource
-	private ${entity.name}Service ${entity.name.toLowerCase()}Service;
+	private ${entity.name}Service ${tools.uncapitalize($entity.name)}Service;
 
     public Converter<${entity.name}, String> get${entity.name}ToStringConverter() {
         return new Converter<${entity.name}, java.lang.String>() {
-            public String convert(${entity.name} ${entity.name.toLowerCase()}) {
-				return ${entity.name.toLowerCase()}Formatter.display(${entity.name.toLowerCase()});
+            public String convert(${entity.name} ${tools.uncapitalize($entity.name)}) {
+				return ${tools.uncapitalize($entity.name)}Formatter.display(${tools.uncapitalize($entity.name)});
             }
         };
     }
@@ -89,7 +89,7 @@ public class ApplicationConversionServiceFactoryBean extends FormattingConversio
     public Converter<${tools.keyType($entity)}, ${entity.name}> getIdTo${entity.name}Converter() {
         return new Converter<${tools.keyType($entity)}, ${entity.name}>() {
             public ${entity.name} convert(${tools.keyType($entity)} ${tools.keyName($entity)}) {
-                return ${entity.name.toLowerCase()}Service.findById(${tools.keyName($entity)});
+                return ${tools.uncapitalize($entity.name)}Service.findById(${tools.keyName($entity)});
             }
         };
     }

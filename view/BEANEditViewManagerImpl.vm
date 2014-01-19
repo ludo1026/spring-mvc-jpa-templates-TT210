@@ -38,43 +38,43 @@ import org.springframework.ui.Model;
 @Component
 public class ${entity.name}EditViewManagerImpl extends AbstractViewManager implements ${entity.name}EditViewManager {
 
-	public static final String ${entity.name.toUpperCase()} = "${entity.name.toLowerCase()}EditViewModel";
+	public static final String ${entity.name.toUpperCase()} = "${tools.uncapitalize($entity.name)}EditViewModel";
 	
 	@Resource
-	private ${entity.name}Service ${entity.name.toLowerCase()}Service;
+	private ${entity.name}Service ${tools.uncapitalize($entity.name)}Service;
 ## Lien vers les entités
 #foreach( $link in $entity.selectedLinks )
 #if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
 	@Resource
-    private ${link.targetEntityType}Service ${link.targetEntityType.toLowerCase()}Service;
+    private ${link.targetEntityType}Service ${tools.uncapitalize($link.targetEntityType)}Service;
 #end
 #end
 
-	public void init(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel) {
-		model.addAttribute(${entity.name.toUpperCase()}, ${entity.name.toLowerCase()}EditViewModel);
+	public void init(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel) {
+		model.addAttribute(${entity.name.toUpperCase()}, ${tools.uncapitalize($entity.name)}EditViewModel);
 ## Lien vers les entités
 #foreach( $link in $entity.selectedLinks )
 #if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
 #set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
-    	model.addAttribute("${link.targetEntityType.toLowerCase()}s", modelMapperHelper.map(${link.targetEntityType.toLowerCase()}Service.findAll(), Item${entityLink.name}.class));
+    	model.addAttribute("${tools.uncapitalize($link.targetEntityType)}s", modelMapperHelper.map(${tools.uncapitalize($link.targetEntityType)}Service.findAll(), Item${entityLink.name}.class));
 #end
 #end
 	}
 	
 	public void displayCreate(Model model) {
-		${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel = new ${entity.name}EditViewModel();
-		init(model, ${entity.name.toLowerCase()}EditViewModel);
+		${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel = new ${entity.name}EditViewModel();
+		init(model, ${tools.uncapitalize($entity.name)}EditViewModel);
 	}
 	
 	public void displayUpdate(Model model, ${tools.keyType($entity)} ${tools.keyName($entity)}) {
-		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.findById(${tools.keyName($entity)});
+		${entity.name} ${tools.uncapitalize($entity.name)} = ${tools.uncapitalize($entity.name)}Service.findById(${tools.keyName($entity)});
 		
-		${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel = modelMapper.map(${entity.name.toLowerCase()}, ${entity.name}EditViewModel.class);
-		init(model, ${entity.name.toLowerCase()}EditViewModel);
+		${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel = modelMapper.map(${tools.uncapitalize($entity.name)}, ${entity.name}EditViewModel.class);
+		init(model, ${tools.uncapitalize($entity.name)}EditViewModel);
 	}
 	
-	public void create(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel) {
-		${entity.name} ${entity.name.toLowerCase()} = modelMapper.map(${entity.name.toLowerCase()}EditViewModel, ${entity.name}.class);
+	public void create(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel) {
+		${entity.name} ${tools.uncapitalize($entity.name)} = modelMapper.map(${tools.uncapitalize($entity.name)}EditViewModel, ${entity.name}.class);
 
 ## define primary key field which are defined by link entity id
 ## Mapped fields = fields in Primary Key or not in selected Links
@@ -85,15 +85,15 @@ public class ${entity.name}EditViewManagerImpl extends AbstractViewManager imple
 #if( ! $entity.hasCompositePrimaryKey() )
 #if( ! $entityLink.hasCompositePrimaryKey() )
 #foreach( $fieldMappingForLink in $fieldsMappingForLink.entrySet() )
-		if( ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}() != null && ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue() != null) {
-			${entity.name.toLowerCase()}.${tools.keySetter($entity)}(${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue());
+		if( ${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}() != null && ${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}().getValue() != null) {
+			${tools.uncapitalize($entity.name)}.${tools.keySetter($entity)}(${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}().getValue());
 		}
 
 #end
 #else
 #foreach( $fieldMappingForLink in $fieldsMappingForLink.entrySet() )
-		if( ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}() != null && ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue() != null) {
-			${entity.name.toLowerCase()}.${tools.keySetter($entity)}(${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue().${fieldMappingForLink.value.getter}());
+		if( ${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}() != null && ${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}().getValue() != null) {
+			${tools.uncapitalize($entity.name)}.${tools.keySetter($entity)}(${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}().getValue().${fieldMappingForLink.value.getter}());
 		}
 
 #end
@@ -101,36 +101,36 @@ public class ${entity.name}EditViewManagerImpl extends AbstractViewManager imple
 #else
 #if( ! $entityLink.hasCompositePrimaryKey() )
 #foreach( $fieldMappingForLink in $fieldsMappingForLink.entrySet() )
-		if( ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}() != null && ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue() != null) {
-			${entity.name.toLowerCase()}.${tools.keyGetter($entity)}().${fieldMappingForLink.key.setter}(${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue());
+		if( ${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}() != null && ${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}().getValue() != null) {
+			${tools.uncapitalize($entity.name)}.${tools.keyGetter($entity)}().${fieldMappingForLink.key.setter}(${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}().getValue());
 		}
 
 #end
 #else
 #foreach( $fieldMappingForLink in $fieldsMappingForLink.entrySet() )
-		if( ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}() != null && ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue() != null) {
-			${entity.name.toLowerCase()}.${tools.keyGetter($entity)}().${fieldMappingForLink.key.setter}(${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue().${fieldMappingForLink.value.getter}());
+		if( ${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}() != null && ${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}().getValue() != null) {
+			${tools.uncapitalize($entity.name)}.${tools.keyGetter($entity)}().${fieldMappingForLink.key.setter}(${tools.uncapitalize($entity.name)}EditViewModel.get${entityLink.name}().getValue().${fieldMappingForLink.value.getter}());
 		}
 
 #end
 #end
 #end
 #end
-		${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
+		${tools.uncapitalize($entity.name)} = ${tools.uncapitalize($entity.name)}Service.save(${tools.uncapitalize($entity.name)});
 		
-		${entity.name.toLowerCase()}EditViewModel = modelMapper.map(${entity.name.toLowerCase()}, ${entity.name}EditViewModel.class);
-		init(model, ${entity.name.toLowerCase()}EditViewModel);
+		${tools.uncapitalize($entity.name)}EditViewModel = modelMapper.map(${tools.uncapitalize($entity.name)}, ${entity.name}EditViewModel.class);
+		init(model, ${tools.uncapitalize($entity.name)}EditViewModel);
 	}
 	
-	public void update(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel) {
-		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.findById(${entity.name.toLowerCase()}EditViewModel.${tools.keyGetter($entity)}());
+	public void update(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel) {
+		${entity.name} ${tools.uncapitalize($entity.name)} = ${tools.uncapitalize($entity.name)}Service.findById(${tools.uncapitalize($entity.name)}EditViewModel.${tools.keyGetter($entity)}());
 		
-		modelMapper.map(${entity.name.toLowerCase()}EditViewModel, ${entity.name.toLowerCase()});
+		modelMapper.map(${tools.uncapitalize($entity.name)}EditViewModel, ${tools.uncapitalize($entity.name)});
 
-		${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
+		${tools.uncapitalize($entity.name)} = ${tools.uncapitalize($entity.name)}Service.save(${tools.uncapitalize($entity.name)});
 		
-		${entity.name.toLowerCase()}EditViewModel = modelMapper.map(${entity.name.toLowerCase()}, ${entity.name}EditViewModel.class);
-		init(model, ${entity.name.toLowerCase()}EditViewModel);
+		${tools.uncapitalize($entity.name)}EditViewModel = modelMapper.map(${tools.uncapitalize($entity.name)}, ${entity.name}EditViewModel.class);
+		init(model, ${tools.uncapitalize($entity.name)}EditViewModel);
 	}
 
 }

@@ -1,3 +1,5 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
 
 #welcome page
 welcome_titlepane=Welcome to {0}
@@ -23,33 +25,33 @@ error.with.cause=Error: {0}, cause: {1}
 already.exists=This entity already exists
 
 #foreach( $entity in $selectedEntities )
-# ${entity.name.toLowerCase()}
-${entity.name.toLowerCase()}=${entity.name}
-${entity.name.toLowerCase()}.list=${entity.name.toLowerCase()}s
+# ${tools.uncapitalize($entity.name)}
+${tools.uncapitalize($entity.name)}=${entity.name}
+${tools.uncapitalize($entity.name)}.list=${tools.uncapitalize($entity.name)}s
 #foreach( $field in ${entity.attributes} )
-${entity.name.toLowerCase()}.${field.formatedName(0)}=${field.label}
+${tools.uncapitalize($entity.name)}.${field.formatedName(0)}=${field.label}
 ##--------------------------------------------------------------------------------------------------------
 ## Validation
 ##--------------------------------------------------------------------------------------------------------
 #if( $field.isKeyElement() )
 #if( $field.formatedType(0) == "Integer" || $field.formatedType(0) == "Long" || $field.formatedType(0) == "Double" || $field.formatedType(0) == "BigInteger" || $field.formatedType(0) == "BigDecimal" )
-NotNull.${entity.name.toLowerCase()}.${field.formatedName(0)}=${field.label} is required
+NotNull.${tools.uncapitalize($entity.name)}.${field.formatedName(0)}=${field.label} is required
 #end
 #else
 #if( $field.isNotNull() )
-NotNull.${entity.name.toLowerCase()}.${field.formatedName(0)}=${field.label} is required
+NotNull.${tools.uncapitalize($entity.name)}.${field.formatedName(0)}=${field.label} is required
 #end
 #end
 ##--------------------------------------------------------------------------------------------------------
 #end
 #foreach( $field in $entity.selectedLinks )
 #if( !$field.isCardinalityManyToMany() && !$field.isCardinalityOneToMany() )
-${entity.name.toLowerCase()}.${field.formatedName(0)}=${field.formatedName(0)}
+${tools.uncapitalize($entity.name)}.${field.formatedName(0)}=${field.formatedName(0)}
 #end
 #end
-${entity.name.toLowerCase()}.error.delete=Erreur lors de la suppression de ${entity.name} : {0} {1}
-${entity.name.toLowerCase()}.error.update=Erreur lors de la mise \u00e0 jour de ${entity.name} : {0} {1}
-${entity.name.toLowerCase()}.error.create=Erreur lors de la cr\u00e9ation de ${entity.name} : {0} {1}
+${tools.uncapitalize($entity.name)}.error.delete=Erreur lors de la suppression de ${entity.name} : {0} {1}
+${tools.uncapitalize($entity.name)}.error.update=Erreur lors de la mise \u00e0 jour de ${entity.name} : {0} {1}
+${tools.uncapitalize($entity.name)}.error.create=Erreur lors de la cr\u00e9ation de ${entity.name} : {0} {1}
 #end
 
 #exception

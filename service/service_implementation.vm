@@ -27,35 +27,35 @@ import ${ROOT_PKG}.service.${entity.name}Service;
 public class ${entity.name}ServiceImpl implements ${entity.name}Service {
 	
 	@Resource
-	private ${entity.name}Dao ${entity.name.toLowerCase()}Dao;
+	private ${entity.name}Dao ${tools.uncapitalize($entity.name)}Dao;
 	@Resource
-	private ${entity.name}Repository ${entity.name.toLowerCase()}Repository;
+	private ${entity.name}Repository ${tools.uncapitalize($entity.name)}Repository;
 	
 	@Transactional(readOnly=true)
 	public ${entity.name} findById(final ${tools.keyType($entity)} ${tools.keyName($entity)}) {
-		return ${entity.name.toLowerCase()}Repository.findOne(${tools.keyName($entity)});
+		return ${tools.uncapitalize($entity.name)}Repository.findOne(${tools.keyName($entity)});
 	}
 	
 	@Transactional(readOnly=true)
 	public List<${entity.name}> findAll() {
-		List<${entity.name}> ${entity.name.toLowerCase()}s = new ArrayList<${entity.name}>();
-		for (${entity.name} ${entity.name.toLowerCase()} : ${entity.name.toLowerCase()}Repository.findAll()) {
-			${entity.name.toLowerCase()}s.add(${entity.name.toLowerCase()});
+		List<${entity.name}> ${tools.uncapitalize($entity.name)}s = new ArrayList<${entity.name}>();
+		for (${entity.name} ${tools.uncapitalize($entity.name)} : ${tools.uncapitalize($entity.name)}Repository.findAll()) {
+			${tools.uncapitalize($entity.name)}s.add(${tools.uncapitalize($entity.name)});
 		}
-		return ${entity.name.toLowerCase()}s;
+		return ${tools.uncapitalize($entity.name)}s;
 	}
 	
 	@Transactional(readOnly=true)
 	public Page<${entity.name}> findAllByPage(Pageable pageable) {
-		return ${entity.name.toLowerCase()}Repository.findAll(pageable);
+		return ${tools.uncapitalize($entity.name)}Repository.findAll(pageable);
 	}
 	
-	public ${entity.name} save(final ${entity.name} ${entity.name.toLowerCase()}) {
-		return ${entity.name.toLowerCase()}Repository.save(${entity.name.toLowerCase()});
+	public ${entity.name} save(final ${entity.name} ${tools.uncapitalize($entity.name)}) {
+		return ${tools.uncapitalize($entity.name)}Repository.save(${tools.uncapitalize($entity.name)});
 	}
 
 	public void delete(final ${tools.keyType($entity)} ${tools.keyName($entity)}) {
-		${entity.name.toLowerCase()}Repository.delete(${tools.keyName($entity)});
+		${tools.uncapitalize($entity.name)}Repository.delete(${tools.keyName($entity)});
 	}
 
 }

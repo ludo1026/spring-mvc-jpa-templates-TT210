@@ -1,3 +1,5 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
 package ${target.javaPackageFromFolder(${TEST_SRC})};
 
 import static org.junit.Assert.assertEquals;
@@ -45,58 +47,58 @@ import ${ROOT_PKG}.dao.repository.${entity.name}Repository;
 public class ${entity.name}ServiceImplUnitTest {
 	
 	@InjectMocks
-	private ${entity.name}ServiceImpl ${entity.name.toLowerCase()}Service;
+	private ${entity.name}ServiceImpl ${tools.uncapitalize($entity.name)}Service;
 	@Mock
-	private ${entity.name}Dao ${entity.name.toLowerCase()}Dao;
+	private ${entity.name}Dao ${tools.uncapitalize($entity.name)}Dao;
 	@Mock
-	private ${entity.name}Repository ${entity.name.toLowerCase()}Repository;
+	private ${entity.name}Repository ${tools.uncapitalize($entity.name)}Repository;
 	
 	@Test
 	public void find() {
 		// Given
 		${keyInit}
 
-		${entity.name} ${entity.name.toLowerCase()} = new ${entity.name}();
-		${entity.name.toLowerCase()}.${keySetter}(${keyName});
+		${entity.name} ${tools.uncapitalize($entity.name)} = new ${entity.name}();
+		${tools.uncapitalize($entity.name)}.${keySetter}(${keyName});
 		
-		when(${entity.name.toLowerCase()}Repository.findOne(${keyName})).thenReturn(${entity.name.toLowerCase()});
+		when(${tools.uncapitalize($entity.name)}Repository.findOne(${keyName})).thenReturn(${tools.uncapitalize($entity.name)});
 
 		// When
-		${entity.name} ${entity.name.toLowerCase()}Result = ${entity.name.toLowerCase()}Service.findById(${keyName});
+		${entity.name} ${tools.uncapitalize($entity.name)}Result = ${tools.uncapitalize($entity.name)}Service.findById(${keyName});
 		
 		// Then
-		assertEquals(${keyName}, ${entity.name.toLowerCase()}Result.${keyGetter}());
+		assertEquals(${keyName}, ${tools.uncapitalize($entity.name)}Result.${keyGetter}());
 	}
 
 	@Test
 	public void findAll() {
 		// Given
-		List<${entity.name}> ${entity.name.toLowerCase()}s = new ArrayList<${entity.name}>();
-		${entity.name.toLowerCase()}s.add(new ${entity.name}());
+		List<${entity.name}> ${tools.uncapitalize($entity.name)}s = new ArrayList<${entity.name}>();
+		${tools.uncapitalize($entity.name)}s.add(new ${entity.name}());
 		
-		when(${entity.name.toLowerCase()}Repository.findAll()).thenReturn(${entity.name.toLowerCase()}s);
+		when(${tools.uncapitalize($entity.name)}Repository.findAll()).thenReturn(${tools.uncapitalize($entity.name)}s);
 		
 		// When
-		List<${entity.name}> ${entity.name.toLowerCase()}sResult = ${entity.name.toLowerCase()}Service.findAll();
+		List<${entity.name}> ${tools.uncapitalize($entity.name)}sResult = ${tools.uncapitalize($entity.name)}Service.findAll();
 		
 		// Then
-		assertEquals(${entity.name.toLowerCase()}s.size(), ${entity.name.toLowerCase()}sResult.size());
+		assertEquals(${tools.uncapitalize($entity.name)}s.size(), ${tools.uncapitalize($entity.name)}sResult.size());
 	}
 	
 	@Test
 	public void save() {
 		// Given
-		${entity.name} ${entity.name.toLowerCase()}ToSave = new ${entity.name}();
-		${entity.name} ${entity.name.toLowerCase()}Saved = new ${entity.name}();
+		${entity.name} ${tools.uncapitalize($entity.name)}ToSave = new ${entity.name}();
+		${entity.name} ${tools.uncapitalize($entity.name)}Saved = new ${entity.name}();
 		
-		when(${entity.name.toLowerCase()}Repository.save(${entity.name.toLowerCase()}ToSave)).thenReturn(${entity.name.toLowerCase()}Saved);
+		when(${tools.uncapitalize($entity.name)}Repository.save(${tools.uncapitalize($entity.name)}ToSave)).thenReturn(${tools.uncapitalize($entity.name)}Saved);
 
 		// When
-		${entity.name} ${entity.name.toLowerCase()}Result = ${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()}ToSave);
+		${entity.name} ${tools.uncapitalize($entity.name)}Result = ${tools.uncapitalize($entity.name)}Service.save(${tools.uncapitalize($entity.name)}ToSave);
 		
 		// Then
-		assertTrue(${entity.name.toLowerCase()}Result != ${entity.name.toLowerCase()}ToSave);
-		assertTrue(${entity.name.toLowerCase()}Result == ${entity.name.toLowerCase()}Saved);
+		assertTrue(${tools.uncapitalize($entity.name)}Result != ${tools.uncapitalize($entity.name)}ToSave);
+		assertTrue(${tools.uncapitalize($entity.name)}Result == ${tools.uncapitalize($entity.name)}Saved);
 	}
 
 	@Test
@@ -105,10 +107,10 @@ public class ${entity.name}ServiceImplUnitTest {
 		${keyInit}
 		
 		// When
-		${entity.name.toLowerCase()}Service.delete(${keyName});
+		${tools.uncapitalize($entity.name)}Service.delete(${keyName});
 		
 		// Then
-		verify(${entity.name.toLowerCase()}Repository).delete(${keyName});
+		verify(${tools.uncapitalize($entity.name)}Repository).delete(${keyName});
 	}
 	
 }

@@ -46,7 +46,7 @@ public class ${entity.name}ServiceMemoryDBIntegTest extends AbstractMemoryDBTest
 	}
 
 	@Resource
-	private ${entity.name}Service ${entity.name.toLowerCase()}Service;
+	private ${entity.name}Service ${tools.uncapitalize($entity.name)}Service;
 
 	@Test
 	public void cycle_vie_complet() {
@@ -66,40 +66,40 @@ public class ${entity.name}ServiceMemoryDBIntegTest extends AbstractMemoryDBTest
 #end
 		${keyInit}
 
-		${entity.name} ${entity.name.toLowerCase()} = new ${entity.name}();
-		${entity.name.toLowerCase()}.${keySetter}(${keyName});
+		${entity.name} ${tools.uncapitalize($entity.name)} = new ${entity.name}();
+		${tools.uncapitalize($entity.name)}.${keySetter}(${keyName});
 #foreach( $field in $entity.getAttributesByCriteria( $const.NOT_KEY, $const.NOT_IN_SELECTED_LINKS ) )
 #if( $field.isNotNull() )
 #if( $tools.isNumber($field) )
-		${entity.name.toLowerCase()}.${field.setter}(${field.wrapperType}.valueOf("1"));
+		${tools.uncapitalize($entity.name)}.${field.setter}(${field.wrapperType}.valueOf("1"));
 #end
 #end
 #end
 #foreach( $link in $tools.links( $entity, $const.NOT_KEY, $const.IN_SELECTED_LINKS ) )
-		${entity.name.toLowerCase()}.${link.setter}(new ${link.targetEntityType}());
+		${tools.uncapitalize($entity.name)}.${link.setter}(new ${link.targetEntityType}());
 #end
 
 		// Create
-		this.${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
+		this.${tools.uncapitalize($entity.name)}Service.save(${tools.uncapitalize($entity.name)});
 
 		// Search
-		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.findById(${keyName});
-		Assert.assertNotNull(${entity.name.toLowerCase()});
+		${tools.uncapitalize($entity.name)} = this.${tools.uncapitalize($entity.name)}Service.findById(${keyName});
+		Assert.assertNotNull(${tools.uncapitalize($entity.name)});
 
 		// Update
-		//${entity.name.toLowerCase()}.setName("Test 2 " + ${keyName});
-		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
+		//${tools.uncapitalize($entity.name)}.setName("Test 2 " + ${keyName});
+		${tools.uncapitalize($entity.name)} = this.${tools.uncapitalize($entity.name)}Service.save(${tools.uncapitalize($entity.name)});
 
 		// Search
-		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.findById(${keyName});
-		//Assert.assertEquals("Test 2 " + ${keyName}, ${entity.name.toLowerCase()}.getName());
+		${tools.uncapitalize($entity.name)} = this.${tools.uncapitalize($entity.name)}Service.findById(${keyName});
+		//Assert.assertEquals("Test 2 " + ${keyName}, ${tools.uncapitalize($entity.name)}.getName());
 
 		// Delete
-		this.${entity.name.toLowerCase()}Service.delete(${entity.name.toLowerCase()}.${keyGetter}());
+		this.${tools.uncapitalize($entity.name)}Service.delete(${tools.uncapitalize($entity.name)}.${keyGetter}());
 
 		// Search
-		${entity.name.toLowerCase()} = this.${entity.name.toLowerCase()}Service.findById(${keyName});
-		Assert.assertNull(${entity.name.toLowerCase()});
+		${tools.uncapitalize($entity.name)} = this.${tools.uncapitalize($entity.name)}Service.findById(${keyName});
+		Assert.assertNull(${tools.uncapitalize($entity.name)});
 	}
 
 }

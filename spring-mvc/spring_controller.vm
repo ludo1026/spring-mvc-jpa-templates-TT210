@@ -19,12 +19,12 @@ package ${target.javaPackageFromFolder(${SRC})};
 #if( $keyGetterToArg != "" ) #set( $keyGetterToArg = $keyGetterToArg + ", " ) #end
 #set( $keyURLPath = $keyURLPath+"{"+${field.formatedName(0)}+"}" )
 #set( $keyPathVariable = $keyPathVariable+"@PathVariable("""+${field.formatedName(0)}+""") "+${field.formatedType(0)}+" "+${field.formatedName(0)} )
-#set( $keyGetterToArg = $keyGetterToArg+${entity.name.toLowerCase()}+"."+${tools.keyGetter($entity)}+"()."+${field.getter}+"()" )
+#set( $keyGetterToArg = $keyGetterToArg+${tools.uncapitalize($entity.name)}+"."+${tools.keyGetter($entity)}+"()."+${field.getter}+"()" )
 #end
 #else
 #set( $keyURLPath = $keyURLPath+"{"+${tools.keyName($entity)}+"}" )
 #set( $keyPathVariable = $keyPathVariable+"@PathVariable("""+${tools.keyName($entity)}+""") "+${tools.keyType($entity)}+" "+${tools.keyName($entity)} )
-#set( $keyGetterToArg = $keyGetterToArg+${entity.name.toLowerCase()}+"."+${tools.keyGetter($entity)}+"()" )
+#set( $keyGetterToArg = $keyGetterToArg+${tools.uncapitalize($entity.name)}+"."+${tools.keyGetter($entity)}+"()" )
 #end
 
 import java.util.List;
@@ -68,78 +68,78 @@ import ${ROOT_PKG}.web.bean.TypeMessage;
  * ${entity.name}.
  */
 @Controller
-@RequestMapping("/${entity.name.toLowerCase()}")
+@RequestMapping("/${tools.uncapitalize($entity.name)}")
 public class ${entity.name}Controller extends AbstractController 
 {
 	@Resource
-    private ${entity.name}Service ${entity.name.toLowerCase()}Service;
+    private ${entity.name}Service ${tools.uncapitalize($entity.name)}Service;
 	@Resource
-    private ${entity.name}ListViewManager ${entity.name.toLowerCase()}ListViewManager;
+    private ${entity.name}ListViewManager ${tools.uncapitalize($entity.name)}ListViewManager;
 	@Resource
-    private ${entity.name}EditViewManager ${entity.name.toLowerCase()}EditViewManager;
+    private ${entity.name}EditViewManager ${tools.uncapitalize($entity.name)}EditViewManager;
 
 	@RequestMapping()
 	public String list(Model model) {
-		${entity.name.toLowerCase()}ListViewManager.list(model);
-		return "${entity.name.toLowerCase()}/list";
+		${tools.uncapitalize($entity.name)}ListViewManager.list(model);
+		return "${tools.uncapitalize($entity.name)}/list";
 	}
 
 	@RequestMapping("/create")
 	public String displayCreate(Model model) {
 		model.addAttribute("mode", "create");
-		${entity.name.toLowerCase()}EditViewManager.displayCreate(model);
-		return "${entity.name.toLowerCase()}/create";
+		${tools.uncapitalize($entity.name)}EditViewManager.displayCreate(model);
+		return "${tools.uncapitalize($entity.name)}/create";
 	}
 
 	@RequestMapping(value = "/${keyURLPath}")
 	public String displayUpdate(Model model, $keyPathVariable) {
 #if ( $entity.hasCompositePrimaryKey() )
-		${tools.keyType($entity)} ${tools.keyType($entity).toLowerCase()} = new ${tools.keyType($entity)}();
+		${tools.keyType($entity)} ${tools.uncapitalize($tools.keyType($entity))} = new ${tools.keyType($entity)}();
 #foreach( $field in $entity.keyAttributes )
-		${tools.keyType($entity).toLowerCase()}.${field.setter}(${field.formatedName(0)});
+		${tools.uncapitalize($tools.keyType($entity))}.${field.setter}(${field.formatedName(0)});
 #end
-		${entity.name.toLowerCase()}EditViewManager.displayUpdate(model, ${tools.keyType($entity).toLowerCase()});
+		${tools.uncapitalize($entity.name)}EditViewManager.displayUpdate(model, ${tools.uncapitalize($tools.keyType($entity))});
 #else
-		${entity.name.toLowerCase()}EditViewManager.displayUpdate(model, ${tools.keyName($entity)});
+		${tools.uncapitalize($entity.name)}EditViewManager.displayUpdate(model, ${tools.keyName($entity)});
 #end
-		return "${entity.name.toLowerCase()}/update";
+		return "${tools.uncapitalize($entity.name)}/update";
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String create(@Valid ${entity.name}EditViewModel ${entity.name.toLowerCase()}, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+	public String create(@Valid ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		try {
 			if (!result.hasErrors()) {
-				${entity.name.toLowerCase()}EditViewManager.create(model, ${entity.name.toLowerCase()});
+				${tools.uncapitalize($entity.name)}EditViewManager.create(model, ${tools.uncapitalize($entity.name)});
 				messageHelper.addMessage(redirectAttributes, new Message(TypeMessage.SUCCESS,"save.ok"));
-				return "redirect:/${entity.name.toLowerCase()}/"+controllerHelper.encodeUrlPathSegments(httpServletRequest, $keyGetterToArg);
+				return "redirect:/${tools.uncapitalize($entity.name)}/"+controllerHelper.encodeUrlPathSegments(httpServletRequest, $keyGetterToArg);
 			} else {
 				model.addAttribute("mode", "create");
-				${entity.name.toLowerCase()}EditViewManager.init(model, ${entity.name.toLowerCase()});
-				return "${entity.name.toLowerCase()}/create";
+				${tools.uncapitalize($entity.name)}EditViewManager.init(model, ${tools.uncapitalize($entity.name)});
+				return "${tools.uncapitalize($entity.name)}/create";
 			}
 		} catch(Exception e) {
 			model.addAttribute("mode", "create");
-			messageHelper.addException(model, "${entity.name.toLowerCase()}.error.create", e);
-			${entity.name.toLowerCase()}EditViewManager.init(model, ${entity.name.toLowerCase()});
-			return "${entity.name.toLowerCase()}/create";
+			messageHelper.addException(model, "${tools.uncapitalize($entity.name)}.error.create", e);
+			${tools.uncapitalize($entity.name)}EditViewManager.init(model, ${tools.uncapitalize($entity.name)});
+			return "${tools.uncapitalize($entity.name)}/create";
 		}
 	}
 
 	@RequestMapping(method = RequestMethod.PUT)
-	public String update(@Valid ${entity.name}EditViewModel ${entity.name.toLowerCase()}, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+	public String update(@Valid ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		try {
 			if (!result.hasErrors()) {
-				${entity.name.toLowerCase()}EditViewManager.update(model, ${entity.name.toLowerCase()});
+				${tools.uncapitalize($entity.name)}EditViewManager.update(model, ${tools.uncapitalize($entity.name)});
 				messageHelper.addMessage(redirectAttributes, new Message(TypeMessage.SUCCESS,"save.ok"));
-				return "redirect:/${entity.name.toLowerCase()}/"+controllerHelper.encodeUrlPathSegments(httpServletRequest, $keyGetterToArg);
+				return "redirect:/${tools.uncapitalize($entity.name)}/"+controllerHelper.encodeUrlPathSegments(httpServletRequest, $keyGetterToArg);
 			} else {
-				${entity.name.toLowerCase()}EditViewManager.init(model, ${entity.name.toLowerCase()});
-				return "${entity.name.toLowerCase()}/update";
+				${tools.uncapitalize($entity.name)}EditViewManager.init(model, ${tools.uncapitalize($entity.name)});
+				return "${tools.uncapitalize($entity.name)}/update";
 			}
 		} catch(Exception e) {
-			messageHelper.addException(model, "${entity.name.toLowerCase()}.error.update", e);
-			${entity.name.toLowerCase()}EditViewManager.init(model, ${entity.name.toLowerCase()});
-			return "${entity.name.toLowerCase()}/update";
+			messageHelper.addException(model, "${tools.uncapitalize($entity.name)}.error.update", e);
+			${tools.uncapitalize($entity.name)}EditViewManager.init(model, ${tools.uncapitalize($entity.name)});
+			return "${tools.uncapitalize($entity.name)}/update";
 		}
 	}
 
@@ -147,18 +147,18 @@ public class ${entity.name}Controller extends AbstractController
 	public String delete(RedirectAttributes redirectAttributes, $keyPathVariable) {
 		try {
 #if ( $entity.hasCompositePrimaryKey() )
-			${tools.keyType($entity)} ${tools.keyType($entity).toLowerCase()} = new ${tools.keyType($entity)}();
+			${tools.keyType($entity)} ${tools.uncapitalize($tools.keyType($entity))} = new ${tools.keyType($entity)}();
 #foreach( $field in $entity.keyAttributes )
-			${tools.keyType($entity).toLowerCase()}.${field.setter}(${field.formatedName(0)});
+			${tools.uncapitalize($tools.keyType($entity))}.${field.setter}(${field.formatedName(0)});
 #end
-			${entity.name.toLowerCase()}ListViewManager.delete(${tools.keyType($entity).toLowerCase()});
+			${tools.uncapitalize($entity.name)}ListViewManager.delete(${tools.uncapitalize($tools.keyType($entity))});
 #else
-			${entity.name.toLowerCase()}ListViewManager.delete(${tools.keyName($entity)});
+			${tools.uncapitalize($entity.name)}ListViewManager.delete(${tools.keyName($entity)});
 #end
 		} catch(Exception e) {
-			messageHelper.addException(redirectAttributes, "${entity.name.toLowerCase()}.error.delete", e);
+			messageHelper.addException(redirectAttributes, "${tools.uncapitalize($entity.name)}.error.delete", e);
 		}
-		return "redirect:/${entity.name.toLowerCase()}";
+		return "redirect:/${tools.uncapitalize($entity.name)}";
 	}
 	
 }

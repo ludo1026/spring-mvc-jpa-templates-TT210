@@ -10,14 +10,14 @@ import org.springframework.ui.Model;
 
 public interface ${entity.name}EditViewManager {
 
-	void init(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel);
+	void init(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel);
 
 	void displayCreate(Model model);
 
 	void displayUpdate(Model model, ${tools.keyType($entity)} ${tools.keyName($entity)});
 
-	void create(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel);
+	void create(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel);
 
-	void update(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel);
+	void update(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel);
 	
 }

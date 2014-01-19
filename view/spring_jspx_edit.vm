@@ -14,10 +14,10 @@
 #set( $keyURLPath = "")
 #if ( $entity.hasCompositePrimaryKey() )
 #foreach( $field in $entity.keyAttributes )
-#set( $keyURLPath = $keyURLPath+"/${"+${entity.name.toLowerCase()}+"."+${field.formatedName(0)}+"}" )
+#set( $keyURLPath = $keyURLPath+"/${"+${tools.uncapitalize($entity.name)}+"EditViewModel."+${tools.keyName($entity)}+"."+${field.formatedName(0)}+"}" )
 #end
 #else
-#set( $keyURLPath = $keyURLPath+"/${"+${entity.name.toLowerCase()}+"."+${tools.keyName($entity)}+"}" )
+#set( $keyURLPath = $keyURLPath+"/${"+${tools.uncapitalize($entity.name)}+"EditViewModel."+${tools.keyName($entity)}+"."+${tools.keyName($entity)}+"}" )
 #end
 ##--------------------------------------------------------------------------------------------------------
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -27,11 +27,11 @@
 
 	<div class="container">
 		<fieldset class="col-sm-12 bordure">
-			<legend class="legende"><s:message code="${entity.name.toLowerCase()}"/></legend>
+			<legend class="legende"><s:message code="${tools.uncapitalize($entity.name)}"/></legend>
 		
 			<util:message message="${_}{message}" messages="${_}{messages}" />
 			
-	    	<s:url value="/${entity.name.toLowerCase()}" var="url_form_submit" />
+	    	<s:url value="/${tools.uncapitalize($entity.name)}" var="url_form_submit" />
 	    	<c:choose>
 	    		<c:when test="${_}{mode == 'create'}">
 	    			<c:set var="method" value="POST" />
@@ -40,7 +40,7 @@
 	    			<c:set var="method" value="PUT" />
 	    		</c:otherwise>
 	    	</c:choose>
-			<form:form class="form-horizontal" modelAttribute="${entity.name.toLowerCase()}EditViewModel" cssClass="well form-horizontal" method="${_}{method}" action="${_}{url_form_submit}">
+			<form:form class="form-horizontal" modelAttribute="${tools.uncapitalize($entity.name)}EditViewModel" cssClass="well form-horizontal" method="${_}{method}" action="${_}{url_form_submit}">
 				<form:errors path="*" cssClass="alert alert-danger" element="div" />
 
 				<c:if test="${_}{mode != 'create'}">
@@ -62,21 +62,21 @@
 				<c:choose>
 	    			<c:when test="${_}{mode == 'create'}">
 						<div class="form-group">
-							<label for="${link.formatedName(0)}_${tools.keyName($entityLink)}" class="col-sm-2 control-label"><s:message code="${entity.name.toLowerCase()}.${link.formatedName(0)}"/></label>
+							<label for="${link.formatedName(0)}_${tools.keyName($entityLink)}" class="col-sm-2 control-label"><s:message code="${tools.uncapitalize($entity.name)}.${link.formatedName(0)}"/></label>
 							<div class="col-sm-10">
 								<form:select id="${link.formatedName(0)}_${tools.keyName($entityLink)}" path="${link.formatedName(0)}.value" cssClass="form-control">
 									<form:option value=""></form:option>
-									<form:options items="${_}{${link.targetEntityType.toLowerCase()}s}" itemValue="value" itemLabel="label" />
+									<form:options items="${_}{${tools.uncapitalize($link.targetEntityType)}s}" itemValue="value" itemLabel="label" />
 								</form:select>
-								<input:errors name="${link.formatedName(0)}" id="${entity.name.toLowerCase()}_${link.formatedName(0)}_errors" />
+								<input:errors name="${link.formatedName(0)}" id="${tools.uncapitalize($entity.name)}_${link.formatedName(0)}_errors" />
 							</div>
 						</div>
 					</c:when>
 		    		<c:otherwise>
 						<div class="form-group">
-							<label for="${link.formatedName(0)}" class="col-sm-2 control-label"><s:message code="${entity.name.toLowerCase()}.${link.formatedName(0)}"/></label>
+							<label for="${link.formatedName(0)}" class="col-sm-2 control-label"><s:message code="${tools.uncapitalize($entity.name)}.${link.formatedName(0)}"/></label>
 							<div class="col-sm-10">
-								${_}{${entity.name.toLowerCase()}EditViewModel.${link.formatedName(0)}}
+								${_}{${tools.uncapitalize($entity.name)}EditViewModel.${link.formatedName(0)}}
 							</div>
 						</div>
 					</c:otherwise>
@@ -89,10 +89,10 @@
 #foreach( $field in $keyFields )
 #if( ! $field.isUsedInLinkJoinColumn($entity.links) )
 				<div class="form-group">
-					<label for="${field.formatedName(0)}" class="col-sm-2 control-label"><s:message code="${entity.name.toLowerCase()}.${field.formatedName(0)}"/></label>
+					<label for="${field.formatedName(0)}" class="col-sm-2 control-label"><s:message code="${tools.uncapitalize($entity.name)}.${field.formatedName(0)}"/></label>
 					<div class="col-sm-10">
-						<input:text name="${field.name}" id="${entity.name.toLowerCase()}_${field.formatedName(0)}" disabled="${_}{mode != 'create'}" />
-						<input:errors name="${field.formatedName(0)}" id="${entity.name.toLowerCase()}_${field.formatedName(0)}_errors" />
+						<input:text name="${field.name}" id="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}" disabled="${_}{mode != 'create'}" />
+						<input:errors name="${field.formatedName(0)}" id="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}_errors" />
 					</div>
 				</div>
 #end
@@ -102,19 +102,19 @@
 				<div class="form-group">
 #if( $field.formatedType(0) == "Boolean" )
 					<div class="col-sm-offset-2 col-sm-10">
-						<input:checkbox name="${field.name}" id="${entity.name.toLowerCase()}_${field.formatedName(0)}" label="${entity.name.toLowerCase()}.${field.formatedName(0)}" />
+						<input:checkbox name="${field.name}" id="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}" label="${tools.uncapitalize($entity.name)}.${field.formatedName(0)}" />
 #else
-					<label for="${entity.name.toLowerCase()}_${field.formatedName(0)}" class="col-sm-2 control-label"><s:message code="${entity.name.toLowerCase()}.${field.formatedName(0)}"/></label>
+					<label for="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}" class="col-sm-2 control-label"><s:message code="${tools.uncapitalize($entity.name)}.${field.formatedName(0)}"/></label>
 					<div class="col-sm-10">
 #if( $field.formatedType(0) == "Date" ||  $field.formatedType(0) == "Calendar" )
-						<input:date name="${field.formatedName(0)}" id="${entity.name.toLowerCase()}_${field.formatedName(0)}" />
+						<input:date name="${field.formatedName(0)}" id="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}" />
 #elseif( $field.isLongText() )
-						<input:textarea name="${field.formatedName(0)}" id="${entity.name.toLowerCase()}_${field.formatedName(0)}" />
+						<input:textarea name="${field.formatedName(0)}" id="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}" />
 #else
-						<input:text name="${field.formatedName(0)}" id="${entity.name.toLowerCase()}_${field.formatedName(0)}" maxLength="${field.databaseSize}" />
+						<input:text name="${field.formatedName(0)}" id="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}" maxLength="${field.databaseSize}" />
 #end
 #end
-						<input:errors name="${field.formatedName(0)}" id="${entity.name.toLowerCase()}_${field.formatedName(0)}_errors" />
+						<input:errors name="${field.formatedName(0)}" id="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}_errors" />
 					</div>
 				</div>
 #end
@@ -124,13 +124,13 @@
 #set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
 #if( $tools.isLinkUsedByFields( $link, $entity.getAttributesByCriteria( $const.NOT_KEY ) ) )
 				<div class="form-group">
-					<label for="${link.formatedName(0)}_${tools.keyName($entityLink)}" class="col-sm-2 control-label"><s:message code="${entity.name.toLowerCase()}.${link.formatedName(0)}"/></label>
+					<label for="${link.formatedName(0)}_${tools.keyName($entityLink)}" class="col-sm-2 control-label"><s:message code="${tools.uncapitalize($entity.name)}.${link.formatedName(0)}"/></label>
 					<div class="col-sm-10">
 						<form:select id="${link.formatedName(0)}_${tools.keyName($entityLink)}" path="${link.formatedName(0)}.value" cssClass="form-control">
 							<form:option value=""></form:option>
-							<form:options items="${_}{${link.targetEntityType.toLowerCase()}s}" itemValue="value" itemLabel="label" />
+							<form:options items="${_}{${tools.uncapitalize($link.targetEntityType)}s}" itemValue="value" itemLabel="label" />
 						</form:select>
-						<input:errors name="${link.formatedName(0)}" id="${entity.name.toLowerCase()}_${link.formatedName(0)}_errors" />
+						<input:errors name="${link.formatedName(0)}" id="${tools.uncapitalize($entity.name)}_${link.formatedName(0)}_errors" />
 					</div>
 				</div>
 #end
@@ -139,12 +139,12 @@
 				<div class="form-group">
 					<c:if test="${_}{mode != 'create'}">
 						<div class="col-sm-offset-2 col-sm-2">
-							<s:url var="delete${entity.name}Url" value="/${entity.name.toLowerCase()}/delete${keyURLPath}"/>
+							<s:url var="delete${entity.name}Url" value="/${tools.uncapitalize($entity.name)}/delete${keyURLPath}"/>
 							<a role="button" class="btn btn-danger btn-block" href="${_}{delete${entity.name}Url}"><s:message code="delete"/></a>
 						</div>
 					</c:if>
     				<div class="col-sm-offset-4 col-sm-2">
-		 				<s:url var="all${entity.name}Url" value="/${entity.name.toLowerCase()}"/>
+		 				<s:url var="all${entity.name}Url" value="/${tools.uncapitalize($entity.name)}"/>
 						<a role="button" class="btn btn-default btn-block" href="${_}{all${entity.name}Url}"><s:message code="cancel"/></a>
 					</div>
     				<div class="col-sm-2">

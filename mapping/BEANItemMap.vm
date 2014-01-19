@@ -21,19 +21,19 @@ public class ${entity.name}ItemMap extends AbstractConverter<${entity.name}, Ite
 	private static final long serialVersionUID = 1L;
 
 	@Resource
-	private ${entity.name}Formatter ${entity.name.toLowerCase()}Formatter;
+	private ${entity.name}Formatter ${tools.uncapitalize($entity.name)}Formatter;
 
 	@Override
-	protected Item${entity.name} convert(${entity.name} ${entity.name.toLowerCase()}) {
+	protected Item${entity.name} convert(${entity.name} ${tools.uncapitalize($entity.name)}) {
 		Item${entity.name} item${entity.name} = new Item${entity.name}();
 		
-		if(${entity.name.toLowerCase()} == null || ${entity.name.toLowerCase()}.${tools.keyGetter($entity)}() == null) {
+		if(${tools.uncapitalize($entity.name)} == null || ${tools.uncapitalize($entity.name)}.${tools.keyGetter($entity)}() == null) {
 			return item${entity.name};
 		}
 
-		item${entity.name}.setLabel(${entity.name.toLowerCase()}Formatter.display(${entity.name.toLowerCase()}));
+		item${entity.name}.setLabel(${tools.uncapitalize($entity.name)}Formatter.display(${tools.uncapitalize($entity.name)}));
 		
-		item${entity.name}.setValue(${entity.name.toLowerCase()}.${tools.keyGetter($entity)}());
+		item${entity.name}.setValue(${tools.uncapitalize($entity.name)}.${tools.keyGetter($entity)}());
 		
 		return item${entity.name};
 	}

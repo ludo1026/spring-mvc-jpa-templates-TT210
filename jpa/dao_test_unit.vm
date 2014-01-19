@@ -1,3 +1,5 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
 package ${target.javaPackageFromFolder(${TEST_SRC})};
 
 import static junit.framework.Assert.assertTrue;
@@ -28,9 +30,9 @@ import ${ROOT_PKG}.dao.repository.${entity.name}Repository;
 public class ${entity.name}DaoUnitTest {
 
 	@InjectMocks
-	private ${entity.name}DaoImpl ${entity.name.toLowerCase()}Dao;
+	private ${entity.name}DaoImpl ${tools.uncapitalize($entity.name)}Dao;
 	@Mock
-	private ${entity.name}Repository ${entity.name.toLowerCase()}Repository;
+	private ${entity.name}Repository ${tools.uncapitalize($entity.name)}Repository;
 	@Mock
 	private EntityManager entityManager;
 	
@@ -39,19 +41,19 @@ public class ${entity.name}DaoUnitTest {
 		// Given
 		String queryName = "queryName";
 		
-		List<${entity.name}> ${entity.name.toLowerCase()}s = new ArrayList<${entity.name}>();
-		${entity.name.toLowerCase()}s.add(Mockito.mock(${entity.name}.class));
-		${entity.name.toLowerCase()}s.add(Mockito.mock(${entity.name}.class));
+		List<${entity.name}> ${tools.uncapitalize($entity.name)}s = new ArrayList<${entity.name}>();
+		${tools.uncapitalize($entity.name)}s.add(Mockito.mock(${entity.name}.class));
+		${tools.uncapitalize($entity.name)}s.add(Mockito.mock(${entity.name}.class));
 		
 		Query query = mock(Query.class);
 		when(entityManager.createNamedQuery(queryName)).thenReturn(query);
-		when(query.getResultList()).thenReturn(${entity.name.toLowerCase()}s);
+		when(query.getResultList()).thenReturn(${tools.uncapitalize($entity.name)}s);
 		
 		// When
-		List<${entity.name}> ${entity.name.toLowerCase()}sResult = ${entity.name.toLowerCase()}Dao.findByNamedQuery(queryName);
+		List<${entity.name}> ${tools.uncapitalize($entity.name)}sResult = ${tools.uncapitalize($entity.name)}Dao.findByNamedQuery(queryName);
 		
 		// Then
-		assertTrue(${entity.name.toLowerCase()}sResult == ${entity.name.toLowerCase()}s);
+		assertTrue(${tools.uncapitalize($entity.name)}sResult == ${tools.uncapitalize($entity.name)}s);
 	}
 
 	@Test
@@ -59,21 +61,21 @@ public class ${entity.name}DaoUnitTest {
 		// Given
 		String queryName = "queryName";
 		
-		List<${entity.name}> ${entity.name.toLowerCase()}s = new ArrayList<${entity.name}>();
-		${entity.name.toLowerCase()}s.add(Mockito.mock(${entity.name}.class));
-		${entity.name.toLowerCase()}s.add(Mockito.mock(${entity.name}.class));
+		List<${entity.name}> ${tools.uncapitalize($entity.name)}s = new ArrayList<${entity.name}>();
+		${tools.uncapitalize($entity.name)}s.add(Mockito.mock(${entity.name}.class));
+		${tools.uncapitalize($entity.name)}s.add(Mockito.mock(${entity.name}.class));
 		
 		Query query = mock(Query.class);
 		when(entityManager.createNamedQuery(queryName)).thenReturn(query);
-		when(query.getResultList()).thenReturn(${entity.name.toLowerCase()}s);
+		when(query.getResultList()).thenReturn(${tools.uncapitalize($entity.name)}s);
 		
 		Map<String, Object> queryParameters = new HashMap<String, Object>();
 		
 		// When
-		List<${entity.name}> ${entity.name.toLowerCase()}sResult = ${entity.name.toLowerCase()}Dao.findByNamedQuery(queryName, queryParameters);
+		List<${entity.name}> ${tools.uncapitalize($entity.name)}sResult = ${tools.uncapitalize($entity.name)}Dao.findByNamedQuery(queryName, queryParameters);
 		
 		// Then
-		assertTrue(${entity.name.toLowerCase()}sResult == ${entity.name.toLowerCase()}s);
+		assertTrue(${tools.uncapitalize($entity.name)}sResult == ${tools.uncapitalize($entity.name)}s);
 	}
 	
 }

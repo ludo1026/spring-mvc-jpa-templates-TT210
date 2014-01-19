@@ -20,6 +20,6 @@ import ${ROOT_PKG}.dao.repository.${entity.name}Repository;
 public class ${entity.name}DaoImpl extends DaoImpl<${entity.name}, ${tools.keyType($entity)}> implements ${entity.name}Dao {
 
 	@Resource
-	private ${entity.name}Repository ${entity.name.toLowerCase()}Repository;
+	private ${entity.name}Repository ${tools.uncapitalize($entity.name)}Repository;
 	
 }
