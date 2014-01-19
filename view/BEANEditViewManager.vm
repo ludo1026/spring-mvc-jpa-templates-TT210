@@ -1,0 +1,23 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+package ${target.javaPackageFromFolder(${SRC})};
+
+import ${ROOT_PKG}.view.model.${entity.name}EditViewModel;
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ROOT_PKG}.bean.${tools.keyType($entity)};
+#end
+import org.springframework.ui.Model;
+
+public interface ${entity.name}EditViewManager {
+
+	void init(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel);
+
+	void displayCreate(Model model);
+
+	void displayUpdate(Model model, ${tools.keyType($entity)} ${tools.keyName($entity)});
+
+	void create(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel);
+
+	void update(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel);
+	
+}

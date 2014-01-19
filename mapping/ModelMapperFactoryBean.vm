@@ -1,0 +1,45 @@
+package ${target.javaPackageFromFolder(${SRC})};
+
+import javax.annotation.Resource;
+
+#foreach( $entity in $selectedEntities )
+import ${ROOT_PKG}.mapping.item.map.${entity.name}ItemMap;
+import ${ROOT_PKG}.mapping.item.map.Item${entity.name}Map;
+#end
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ModelMapperFactoryBean implements FactoryBean<ModelMapper> {
+
+#foreach( $entity in $selectedEntities )
+	@Resource
+	private ${entity.name}ItemMap ${entity.name.toLowerCase()}ItemMap;
+	@Resource
+	private Item${entity.name}Map item${entity.name}Map;
+#end
+
+	@Override
+	public ModelMapper getObject() throws Exception {
+		ModelMapper modelMapper = new ModelMapper();
+
+#foreach( $entity in $selectedEntities )
+		modelMapper.addConverter(${entity.name.toLowerCase()}ItemMap);
+		modelMapper.addConverter(item${entity.name}Map);
+
+#end
+		return modelMapper;
+	}
+
+	@Override
+	public Class<?> getObjectType() {
+		return ModelMapper.class;
+	}
+
+	@Override
+	public boolean isSingleton() {
+		return true;
+	}
+
+}

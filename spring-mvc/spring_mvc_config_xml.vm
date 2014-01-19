@@ -9,13 +9,15 @@
 		http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
+	<context:component-scan base-package="${ROOT_PKG}.mapping" />
+	<context:component-scan base-package="${ROOT_PKG}.view" />
 	<context:component-scan base-package="${ROOT_PKG}.web" />
 
 	<!-- <annotation-driven /> enables the support of annotation configuration for Spring MVC controllers, -->
 	<!-- as well as enabling Spring 3 type conversion and formatting support. -->
 	<!-- Also, support for JSR-303 Bean Validation is enabled by this tag. -->
     <mvc:annotation-driven conversion-service="applicationConversionService"/>
-    <bean id="applicationConversionService" class="${ROOT_PKG}.web.ApplicationConversionServiceFactoryBean"/>
+    <bean id="applicationConversionService" class="${ROOT_PKG}.web.convert.ApplicationConversionServiceFactoryBean"/>
 
 	<!-- static resources -->
 	<mvc:resources mapping="/css/**" location="/css/" />

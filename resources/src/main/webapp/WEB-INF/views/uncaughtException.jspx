@@ -25,5 +25,23 @@
         </div>
       </p>
     </c:if>
+    <c:if test="${not empty exception.cause}">
+      <p>
+        <h4>
+          <spring:message code="exception_details" />
+        </h4>
+        <spring:message var="message" code="exception_message" htmlEscape="false" />
+        <div>
+          <c:out value="${exception.cause.localizedMessage}" />
+        </div>
+        <spring:message var="stacktrace" code="exception_stacktrace" htmlEscape="false" />
+        <div>
+          <c:forEach items="${exception.cause.stackTrace}" var="trace">
+            <c:out value="${trace}" />
+            <br />
+          </c:forEach>
+        </div>
+      </p>
+    </c:if>
   </div>
 </div>

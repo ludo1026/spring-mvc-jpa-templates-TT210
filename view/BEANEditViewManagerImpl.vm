@@ -1,0 +1,136 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+package ${target.javaPackageFromFolder(${SRC})};
+
+import javax.annotation.Resource;
+
+import ${ROOT_PKG}.bean.${entity.name};
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ROOT_PKG}.bean.${tools.keyType($entity)};
+#end
+## Lien vers les entités
+#foreach( $link in $entity.selectedLinks )
+#if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
+import ${ROOT_PKG}.bean.${link.targetEntityType};
+#end
+#end
+## Lien vers les entités
+#foreach( $link in $entity.selectedLinks )
+#if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
+import ${ROOT_PKG}.mapping.item.Item${link.targetEntityType};
+#end
+#end
+import ${ROOT_PKG}.service.${entity.name}Service;
+## Lien vers les entités
+#foreach( $link in $entity.selectedLinks )
+#if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
+import ${ROOT_PKG}.service.${link.targetEntityType}Service;
+#end
+#end
+import ${ROOT_PKG}.view.manager.${entity.name}EditViewManager;
+import ${ROOT_PKG}.view.manager.base.AbstractViewManager;
+import ${ROOT_PKG}.view.model.${entity.name}EditViewModel;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+
+@Transactional
+@Component
+public class ${entity.name}EditViewManagerImpl extends AbstractViewManager implements ${entity.name}EditViewManager {
+
+	public static final String ${entity.name.toUpperCase()} = "${entity.name.toLowerCase()}EditViewModel";
+	
+	@Resource
+	private ${entity.name}Service ${entity.name.toLowerCase()}Service;
+## Lien vers les entités
+#foreach( $link in $entity.selectedLinks )
+#if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
+	@Resource
+    private ${link.targetEntityType}Service ${link.targetEntityType.toLowerCase()}Service;
+#end
+#end
+
+	public void init(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel) {
+		model.addAttribute(${entity.name.toUpperCase()}, ${entity.name.toLowerCase()}EditViewModel);
+## Lien vers les entités
+#foreach( $link in $entity.selectedLinks )
+#if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
+#set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
+    	model.addAttribute("${link.targetEntityType.toLowerCase()}s", modelMapperHelper.map(${link.targetEntityType.toLowerCase()}Service.findAll(), Item${entityLink.name}.class));
+#end
+#end
+	}
+	
+	public void displayCreate(Model model) {
+		${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel = new ${entity.name}EditViewModel();
+		init(model, ${entity.name.toLowerCase()}EditViewModel);
+	}
+	
+	public void displayUpdate(Model model, ${tools.keyType($entity)} ${tools.keyName($entity)}) {
+		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.findById(${tools.keyName($entity)});
+		
+		${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel = modelMapper.map(${entity.name.toLowerCase()}, ${entity.name}EditViewModel.class);
+		init(model, ${entity.name.toLowerCase()}EditViewModel);
+	}
+	
+	public void create(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel) {
+		${entity.name} ${entity.name.toLowerCase()} = modelMapper.map(${entity.name.toLowerCase()}EditViewModel, ${entity.name}.class);
+
+## define primary key field which are defined by link entity id
+## Mapped fields = fields in Primary Key or not in selected Links
+#set( $allMappedFields = $fn.concatLists($entity.keyAttributes, $entity.getAttributesByCriteria( $const.NOT_KEY, $const.NOT_IN_SELECTED_LINKS ) ) )
+#foreach( $link in $entity.selectedLinks )
+#set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
+#set( $fieldsMappingForLink = $tools.fieldsMappingForLink( $entity, $entityLink, $link, $allMappedFields ) )
+#if( ! $entity.hasCompositePrimaryKey() )
+#if( ! $entityLink.hasCompositePrimaryKey() )
+#foreach( $fieldMappingForLink in $fieldsMappingForLink.entrySet() )
+		if( ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}() != null && ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue() != null) {
+			${entity.name.toLowerCase()}.${tools.keySetter($entity)}(${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue());
+		}
+
+#end
+#else
+#foreach( $fieldMappingForLink in $fieldsMappingForLink.entrySet() )
+		if( ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}() != null && ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue() != null) {
+			${entity.name.toLowerCase()}.${tools.keySetter($entity)}(${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue().${fieldMappingForLink.value.getter}());
+		}
+
+#end
+#end
+#else
+#if( ! $entityLink.hasCompositePrimaryKey() )
+#foreach( $fieldMappingForLink in $fieldsMappingForLink.entrySet() )
+		if( ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}() != null && ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue() != null) {
+			${entity.name.toLowerCase()}.${tools.keyGetter($entity)}().${fieldMappingForLink.key.setter}(${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue());
+		}
+
+#end
+#else
+#foreach( $fieldMappingForLink in $fieldsMappingForLink.entrySet() )
+		if( ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}() != null && ${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue() != null) {
+			${entity.name.toLowerCase()}.${tools.keyGetter($entity)}().${fieldMappingForLink.key.setter}(${entity.name.toLowerCase()}EditViewModel.get${entityLink.name}().getValue().${fieldMappingForLink.value.getter}());
+		}
+
+#end
+#end
+#end
+#end
+		${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
+		
+		${entity.name.toLowerCase()}EditViewModel = modelMapper.map(${entity.name.toLowerCase()}, ${entity.name}EditViewModel.class);
+		init(model, ${entity.name.toLowerCase()}EditViewModel);
+	}
+	
+	public void update(Model model, ${entity.name}EditViewModel ${entity.name.toLowerCase()}EditViewModel) {
+		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.findById(${entity.name.toLowerCase()}EditViewModel.${tools.keyGetter($entity)}());
+		
+		modelMapper.map(${entity.name.toLowerCase()}EditViewModel, ${entity.name.toLowerCase()});
+
+		${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
+		
+		${entity.name.toLowerCase()}EditViewModel = modelMapper.map(${entity.name.toLowerCase()}, ${entity.name}EditViewModel.class);
+		init(model, ${entity.name.toLowerCase()}EditViewModel);
+	}
+
+}

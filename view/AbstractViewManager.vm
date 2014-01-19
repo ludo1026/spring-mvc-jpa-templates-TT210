@@ -1,0 +1,18 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+package ${target.javaPackageFromFolder(${SRC})};
+
+import javax.annotation.Resource;
+
+import ${ROOT_PKG}.mapping.ModelMapperHelper;
+import org.modelmapper.ModelMapper;
+
+public abstract class AbstractViewManager {
+
+	@Resource
+	protected ModelMapper modelMapper;
+
+	@Resource
+	protected ModelMapperHelper modelMapperHelper;
+	
+}

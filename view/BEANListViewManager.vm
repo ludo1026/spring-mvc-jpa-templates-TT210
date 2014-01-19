@@ -1,0 +1,16 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+package ${target.javaPackageFromFolder(${SRC})};
+
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ROOT_PKG}.bean.${tools.keyType($entity)};
+#end
+import org.springframework.ui.Model;
+
+public interface ${entity.name}ListViewManager {
+	
+	void list(Model model);
+
+	void delete(${tools.keyType($entity)} ${tools.keyName($entity)});
+	
+}

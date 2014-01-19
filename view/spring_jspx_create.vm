@@ -36,7 +36,7 @@
 			<util:message message="${_}{message}" messages="${_}{messages}" />
 			
 	    	<s:url value="/${entity.name.toLowerCase()}" var="url_form_submit" />
-			<form:form class="form-horizontal" modelAttribute="${entity.name.toLowerCase()}" cssClass="well form-horizontal" method="POST" action="${_}{url_form_submit}">
+			<form:form class="form-horizontal" modelAttribute="${entity.name.toLowerCase()}CreateViewModel" cssClass="well form-horizontal" method="POST" action="${_}{url_form_submit}">
 				<form:errors path="*" cssClass="alert alert-danger" element="div" />
 ## KEY
 #foreach( $field in $keyFields )
@@ -76,27 +76,15 @@
 ## LINKS
 #foreach( $link in $entity.links )
 #if ( $link.isCardinalityOneToOne() || $link.isCardinalityManyToOne() )
-#set( $linkEntity = $model.getEntityByClassName($link.targetEntityType) )
-#if ( $linkEntity.hasCompositePrimaryKey() )
-#set( $linkKeyType = "${entity.name}Key" )
-#set( $linkKeyName = "id" )
-#else
-#set( $linkKeyField = $linkEntity.keyAttributes[0] )
-#set( $linkKeyType = "$linkKeyField.formatedType(0)" )
-#set( $linkKeyName = "$linkKeyField.formatedName(0)" )
-#end
+#set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
 				<div class="form-group">
-					<label for="${link.formatedName(0)}_${linkKeyName}" class="col-sm-2 control-label"><s:message code="${entity.name.toLowerCase()}.${link.formatedName(0)}"/></label>
+					<label for="${link.formatedName(0)}_${tools.keyName($entityLink)}" class="col-sm-2 control-label"><s:message code="${entity.name.toLowerCase()}.${link.formatedName(0)}"/></label>
 					<div class="col-sm-10">
-						<input:selectEntity 
-							id="${link.formatedName(0)}_${linkKeyName}" 
-							name="${link.formatedName(0)}"
-							entities="${_}{${link.targetEntityType.toLowerCase()}s}"
-							entityId="${linkKeyName}"
-							entitySelected="${_}{${entity.name.toLowerCase()}.${link.formatedName(0)}}"
-							cssClass="form-control" 
-						/>
-						<input:errors name="${link.formatedName(0)}" id="${entity.name.toLowerCase()}_${link.formatedName(0)}_errors" />
+						<form:select id="${link.formatedName(0)}_${tools.keyName($entityLink)}" path="${link.formatedName(0)}${tools.capitalize($tools.keyName($entityLink))}" cssClass="form-control">
+							<form:option value=""></form:option>
+							<form:options items="${_}{${link.targetEntityType.toLowerCase()}s}" itemValue="value" itemLabel="label" />
+						</form:select>
+						<input:errors name="${link.formatedName(0)}${tools.capitalize($tools.keyName($entityLink))}" id="${entity.name.toLowerCase()}_${link.formatedName(0)}_errors" />
 					</div>
 				</div>
 #end

@@ -1,0 +1,38 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+package ${target.javaPackageFromFolder(${SRC})};
+
+import javax.annotation.Resource;
+
+import ${ROOT_PKG}.bean.${entity.name};
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ROOT_PKG}.bean.${tools.keyType($entity)};
+#end
+import ${ROOT_PKG}.mapping.item.Item${entity.name};
+import ${ROOT_PKG}.service.${entity.name}Service;
+import org.modelmapper.AbstractConverter;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Item${entity.name}Map extends AbstractConverter<Item${entity.name}, ${entity.name}> {
+
+	@Resource
+	private ${entity.name}Service ${entity.name.toLowerCase()}Service;
+		
+	@Override
+	protected ${entity.name} convert(Item${entity.name} item${entity.name}) {
+		if(item${entity.name} == null) {
+			return null;
+		}
+		if(item${entity.name}.getValue() == null) {
+			return null;
+		}
+		if( !(item${entity.name}.getValue() instanceof ${tools.keyType($entity)}) ) {
+			return null;
+		}
+		
+		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.findById(item${entity.name}.getValue());
+		return ${entity.name.toLowerCase()};
+	}
+	
+}

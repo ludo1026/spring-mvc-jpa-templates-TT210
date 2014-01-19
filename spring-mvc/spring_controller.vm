@@ -19,7 +19,7 @@ package ${target.javaPackageFromFolder(${SRC})};
 #if( $keyGetterToArg != "" ) #set( $keyGetterToArg = $keyGetterToArg + ", " ) #end
 #set( $keyURLPath = $keyURLPath+"{"+${field.formatedName(0)}+"}" )
 #set( $keyPathVariable = $keyPathVariable+"@PathVariable("""+${field.formatedName(0)}+""") "+${field.formatedType(0)}+" "+${field.formatedName(0)} )
-#set( $keyGetterToArg = $keyGetterToArg+${entity.name.toLowerCase()}+"."+${field.getter}+"()" )
+#set( $keyGetterToArg = $keyGetterToArg+${entity.name.toLowerCase()}+"."+${tools.keyGetter($entity)}+"()."+${field.getter}+"()" )
 #end
 #else
 #set( $keyURLPath = $keyURLPath+"{"+${tools.keyName($entity)}+"}" )
@@ -52,6 +52,9 @@ import ${ENTITY_PKG}.${entity.name};
 import ${ENTITY_PKG}.${entity.name}Id;
 #end
 import ${ROOT_PKG}.service.${entity.name}Service;
+import ${ROOT_PKG}.view.manager.${entity.name}EditViewManager;
+import ${ROOT_PKG}.view.manager.${entity.name}ListViewManager;
+import ${ROOT_PKG}.view.model.${entity.name}EditViewModel;
 ## Lien vers les entités
 #foreach( $link in $entity.selectedLinks )
 #if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
@@ -70,86 +73,73 @@ public class ${entity.name}Controller extends AbstractController
 {
 	@Resource
     private ${entity.name}Service ${entity.name.toLowerCase()}Service;
-## Lien vers les entités
-#foreach( $link in $entity.selectedLinks )
-#if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
 	@Resource
-    private ${link.targetEntityType}Service ${link.targetEntityType.toLowerCase()}Service;
-#end
-#end
+    private ${entity.name}ListViewManager ${entity.name.toLowerCase()}ListViewManager;
+	@Resource
+    private ${entity.name}EditViewManager ${entity.name.toLowerCase()}EditViewManager;
 
 	@RequestMapping()
-	public String list(Model uiModel) {
-		List<${entity.name}> list = ${entity.name.toLowerCase()}Service.findAll();
-		uiModel.addAttribute("list${entity.name}s", list);
+	public String list(Model model) {
+		${entity.name.toLowerCase()}ListViewManager.list(model);
 		return "${entity.name.toLowerCase()}/list";
 	}
 
-	void populateForm(Model uiModel, ${entity.name} ${entity.name.toLowerCase()}) {
-		uiModel.addAttribute("${entity.name.toLowerCase()}", ${entity.name.toLowerCase()});
-		// Listes déroulantes des objets liés
-## Lien vers les entités
-#foreach( $link in $entity.selectedLinks )
-#if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
-    	uiModel.addAttribute("${link.targetEntityType.toLowerCase()}s", ${link.targetEntityType.toLowerCase()}Service.findAll());
-#end
-#end
-	}
-
 	@RequestMapping("/create")
-	public String displayCreateForm(Model uiModel) {
-		this.populateForm(uiModel, new ${entity.name}());
+	public String displayCreate(Model model) {
+		model.addAttribute("mode", "create");
+		${entity.name.toLowerCase()}EditViewManager.displayCreate(model);
 		return "${entity.name.toLowerCase()}/create";
 	}
 
 	@RequestMapping(value = "/${keyURLPath}")
-	public String displayEditForm(Model uiModel, $keyPathVariable) {
+	public String displayUpdate(Model model, $keyPathVariable) {
 #if ( $entity.hasCompositePrimaryKey() )
 		${tools.keyType($entity)} ${tools.keyType($entity).toLowerCase()} = new ${tools.keyType($entity)}();
 #foreach( $field in $entity.keyAttributes )
 		${tools.keyType($entity).toLowerCase()}.${field.setter}(${field.formatedName(0)});
 #end
-		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.findById(${tools.keyType($entity).toLowerCase()});
+		${entity.name.toLowerCase()}EditViewManager.displayUpdate(model, ${tools.keyType($entity).toLowerCase()});
 #else
-		${entity.name} ${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.findById(${tools.keyName($entity)});
+		${entity.name.toLowerCase()}EditViewManager.displayUpdate(model, ${tools.keyName($entity)});
 #end
-		this.populateForm(uiModel, ${entity.name.toLowerCase()});
-		return "${entity.name.toLowerCase()}/edit";
+		return "${entity.name.toLowerCase()}/update";
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String create(@Valid ${entity.name} ${entity.name.toLowerCase()}, BindingResult result, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+	public String create(@Valid ${entity.name}EditViewModel ${entity.name.toLowerCase()}, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		try {
 			if (!result.hasErrors()) {
-				${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
+				${entity.name.toLowerCase()}EditViewManager.create(model, ${entity.name.toLowerCase()});
 				messageHelper.addMessage(redirectAttributes, new Message(TypeMessage.SUCCESS,"save.ok"));
 				return "redirect:/${entity.name.toLowerCase()}/"+controllerHelper.encodeUrlPathSegments(httpServletRequest, $keyGetterToArg);
 			} else {
-				populateForm(uiModel, ${entity.name.toLowerCase()});
+				model.addAttribute("mode", "create");
+				${entity.name.toLowerCase()}EditViewManager.init(model, ${entity.name.toLowerCase()});
 				return "${entity.name.toLowerCase()}/create";
 			}
 		} catch(Exception e) {
-			messageHelper.addException(uiModel, "${entity.name.toLowerCase()}.error.create", e);
-			populateForm(uiModel, ${entity.name.toLowerCase()});
+			model.addAttribute("mode", "create");
+			messageHelper.addException(model, "${entity.name.toLowerCase()}.error.create", e);
+			${entity.name.toLowerCase()}EditViewManager.init(model, ${entity.name.toLowerCase()});
 			return "${entity.name.toLowerCase()}/create";
 		}
 	}
 
 	@RequestMapping(method = RequestMethod.PUT)
-	public String update(@Valid ${entity.name} ${entity.name.toLowerCase()}, BindingResult result, Model uiModel, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
+	public String update(@Valid ${entity.name}EditViewModel ${entity.name.toLowerCase()}, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		try {
 			if (!result.hasErrors()) {
-				${entity.name.toLowerCase()} = ${entity.name.toLowerCase()}Service.save(${entity.name.toLowerCase()});
+				${entity.name.toLowerCase()}EditViewManager.update(model, ${entity.name.toLowerCase()});
 				messageHelper.addMessage(redirectAttributes, new Message(TypeMessage.SUCCESS,"save.ok"));
 				return "redirect:/${entity.name.toLowerCase()}/"+controllerHelper.encodeUrlPathSegments(httpServletRequest, $keyGetterToArg);
 			} else {
-				populateForm(uiModel, ${entity.name.toLowerCase()});
-				return "${entity.name.toLowerCase()}/edit";
+				${entity.name.toLowerCase()}EditViewManager.init(model, ${entity.name.toLowerCase()});
+				return "${entity.name.toLowerCase()}/update";
 			}
 		} catch(Exception e) {
-			messageHelper.addException(uiModel, "${entity.name.toLowerCase()}.error.update", e);
-			populateForm(uiModel, ${entity.name.toLowerCase()});
-			return "${entity.name.toLowerCase()}/edit";
+			messageHelper.addException(model, "${entity.name.toLowerCase()}.error.update", e);
+			${entity.name.toLowerCase()}EditViewManager.init(model, ${entity.name.toLowerCase()});
+			return "${entity.name.toLowerCase()}/update";
 		}
 	}
 
@@ -161,9 +151,9 @@ public class ${entity.name}Controller extends AbstractController
 #foreach( $field in $entity.keyAttributes )
 			${tools.keyType($entity).toLowerCase()}.${field.setter}(${field.formatedName(0)});
 #end
-			${entity.name.toLowerCase()}Service.delete(${tools.keyType($entity).toLowerCase()});
+			${entity.name.toLowerCase()}ListViewManager.delete(${tools.keyType($entity).toLowerCase()});
 #else
-			${entity.name.toLowerCase()}Service.delete(${tools.keyName($entity)});
+			${entity.name.toLowerCase()}ListViewManager.delete(${tools.keyName($entity)});
 #end
 		} catch(Exception e) {
 			messageHelper.addException(redirectAttributes, "${entity.name.toLowerCase()}.error.delete", e);

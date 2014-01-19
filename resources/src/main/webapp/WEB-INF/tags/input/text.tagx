@@ -5,9 +5,14 @@
 	<jsp:directive.attribute name="name" type="java.lang.String" required="true" rtexprvalue="true" description="path attribute" />
 	<jsp:directive.attribute name="maxLength" type="java.lang.Integer" required="false" rtexprvalue="true" description="max length" />
 	<jsp:directive.attribute name="size" type="java.lang.Integer" required="false" rtexprvalue="true" description="input size" />
+	<jsp:directive.attribute name="disabled" type="java.lang.Boolean" required="false" rtexprvalue="true" description="disabled" />
 	<jsp:directive.attribute name="cssClass" type="java.lang.String" required="false" rtexprvalue="true" description="css class" />
 	
 	<!-- default values -->
+	
+	<c:if test="${empty disabled}">
+		<c:set var="disabled" value="false" />
+	</c:if>
 	
 	<c:if test="${empty cssClass}">
 		<c:set var="cssClass" value="form-control" />
@@ -26,6 +31,13 @@
 	
 	<!-- content -->
 	
-	<form:input id="${id}" path="${name}" class="${cssClass}" size="${size}" maxLength="${maxLength}"/>
+	<c:choose>
+		<c:when test="${disabled}">
+			<form:input id="${id}" path="${name}" class="${cssClass}" size="${size}" maxLength="${maxLength}" disabled="true"/>
+		</c:when>
+		<c:otherwise>
+			<form:input id="${id}" path="${name}" class="${cssClass}" size="${size}" maxLength="${maxLength}"/>
+		</c:otherwise>
+	</c:choose>
 	
 </jsp:root>

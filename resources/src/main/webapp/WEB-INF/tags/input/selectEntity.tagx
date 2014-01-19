@@ -5,7 +5,7 @@
 	<jsp:directive.attribute name="name" type="java.lang.String" required="true" rtexprvalue="true" description="field name" />
 	<jsp:directive.attribute name="entities" type="java.util.List" required="true" rtexprvalue="true" description="entity list" />
 	<jsp:directive.attribute name="entityId" type="java.lang.String" required="true" rtexprvalue="true" description="entity id" />
-	<jsp:directive.attribute name="entitySelected" type="java.lang.Object" required="false" rtexprvalue="true" description="selected entity" />
+	<jsp:directive.attribute name="entityIdSelected" type="java.lang.Object" required="false" rtexprvalue="true" description="selected entity id" />
 	<jsp:directive.attribute name="cssClass" type="java.lang.String" required="false" rtexprvalue="true" description="css class" />
 
 	<!-- default values -->
@@ -21,7 +21,7 @@
 		<c:forEach items="${entities}" var="entity">
 			<c:choose>
 				<!-- with selected entity -->
-				<c:when test="${not empty entitySelected and entitySelected[fn:escapeXml(entityId)] == entity[fn:escapeXml(entityId)]}">
+				<c:when test="${not empty entityIdSelected and entityIdSelected == entity[fn:escapeXml(entityId)]}">
 					<option value="${entity[fn:escapeXml(entityId)]}" selected="selected">
 						<s:eval expression="entity"/>
 					</option>

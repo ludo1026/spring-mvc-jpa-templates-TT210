@@ -6,9 +6,9 @@
 		<put-attribute name="body" value="/WEB-INF/views/${entity.name.toLowerCase()}/${entity.name.toLowerCase()}_list.jspx" />
 	</definition>
 	<definition extends="default" name="${entity.name.toLowerCase()}/create">
-		<put-attribute name="body" value="/WEB-INF/views/${entity.name.toLowerCase()}/${entity.name.toLowerCase()}_create.jspx" />
+		<put-attribute name="body" value="/WEB-INF/views/${entity.name.toLowerCase()}/${entity.name.toLowerCase()}_edit.jspx" />
 	</definition>
-	<definition extends="default" name="${entity.name.toLowerCase()}/edit">
+	<definition extends="default" name="${entity.name.toLowerCase()}/update">
 		<put-attribute name="body" value="/WEB-INF/views/${entity.name.toLowerCase()}/${entity.name.toLowerCase()}_edit.jspx" />
 	</definition>
 </tiles-definitions>

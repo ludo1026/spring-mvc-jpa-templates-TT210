@@ -1,0 +1,24 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+package ${target.javaPackageFromFolder(${SRC})};
+
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ENTITY_PKG}.${entity.name}Id;
+#end
+import ${ROOT_PKG}.mapping.item.base.AbstractItem;
+
+public class Item${entity.name} extends AbstractItem<${tools.keyType($entity)}> {
+	
+	private static final long serialVersionUID = 2L;
+	
+	private ${tools.keyType($entity)} value;
+	
+	public ${tools.keyType($entity)} getValue() {
+		return value;
+	}
+	
+	public void setValue(${tools.keyType($entity)} value) {
+		this.value = value;
+	}
+
+}

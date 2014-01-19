@@ -1,0 +1,41 @@
+#set( $tools = $loader.newInstance("Tools") )
+##--------------------------------------------------------------------------------------------------------
+package ${target.javaPackageFromFolder(${SRC})};
+
+import java.io.Serializable;
+
+import javax.annotation.Resource;
+
+import ${ROOT_PKG}.bean.${entity.name};
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ROOT_PKG}.bean.${tools.keyType($entity)};
+#end
+import ${ROOT_PKG}.mapping.item.Item${entity.name};
+import ${ROOT_PKG}.web.formatter.${entity.name}Formatter;
+import org.modelmapper.AbstractConverter;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ${entity.name}ItemMap extends AbstractConverter<${entity.name}, Item${entity.name}> implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+
+	@Resource
+	private ${entity.name}Formatter ${entity.name.toLowerCase()}Formatter;
+
+	@Override
+	protected Item${entity.name} convert(${entity.name} ${entity.name.toLowerCase()}) {
+		Item${entity.name} item${entity.name} = new Item${entity.name}();
+		
+		if(${entity.name.toLowerCase()} == null || ${entity.name.toLowerCase()}.${tools.keyGetter($entity)}() == null) {
+			return item${entity.name};
+		}
+
+		item${entity.name}.setLabel(${entity.name.toLowerCase()}Formatter.display(${entity.name.toLowerCase()}));
+		
+		item${entity.name}.setValue(${entity.name.toLowerCase()}.${tools.keyGetter($entity)}());
+		
+		return item${entity.name};
+	}
+	
+}

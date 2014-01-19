@@ -1,5 +1,6 @@
 #set( $tools = $loader.newInstance("Tools") )
 ##--------------------------------------------------------------------------------------------------------
+##--------------------------------------------------------------------------------------------------------
 ## Key fields = fields in Primary Key    
 #set( $keyFields = $entity.getAttributesByCriteria( $const.KEY ) )
 ##--------------------------------------------------------------------------------------------------------
@@ -12,10 +13,6 @@
 ## Mapped fields = fields in Primary Key or not in selected Links    
 #set( $allMappedFields = $fn.concatLists($entity.keyAttributes, $dataFields) )
 ##--------------------------------------------------------------------------------------------------------
-## IF COMPOSITE PRIMARY KEY : GENERATE A JAVA CLASS FOR THIS COMPOSITE KEY
-#if ( $entity.hasCompositePrimaryKey() )
-#set( $ttt = $generator.generate($target.entityName ,  "${entity.name}Id.java", $target.folder, "entity/entity_pk.vm"  ) )
-#end
 package ${target.javaPackageFromFolder($SRC)};
 
 import java.io.Serializable;
@@ -25,16 +22,22 @@ import javax.validation.Valid;
 #end
 import javax.validation.constraints.*;
 
+#if ( $entity.hasCompositePrimaryKey() )
+import ${ENTITY_PKG}.${entity.name}Id;
+#end
+
 #foreach( $import in $java.imports($entity) )
 import $import;
 #end
 
-#foreach( $import in $jpa.imports($entity) )
-import $import;
+## Lien vers les entités
+#foreach( $link in $entity.selectedLinks )
+#if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
+import ${ROOT_PKG}.mapping.item.Item${link.targetEntityType};
+#end
 #end
 
-$jpa.entityAnnotations(0,$entity)
-public class $entity.name implements Serializable
+public class ${entity.name}ListViewModel implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
@@ -42,8 +45,6 @@ public class $entity.name implements Serializable
     //----------------------------------------------------------------------
     // ENTITY PRIMARY KEY ( EMBEDDED IN AN EXTERNAL CLASS )  
     //----------------------------------------------------------------------
-	@EmbeddedId
-	@Valid
     private ${entity.name}Id id = new ${entity.name}Id();
 
 #else 
@@ -51,9 +52,7 @@ public class $entity.name implements Serializable
     // ENTITY PRIMARY KEY ( BASED ON A SINGLE FIELD )
     //----------------------------------------------------------------------
 #foreach( $field in $entity.keyAttributes )
-$jpa.fieldAnnotations(4,$field)
-$beanValidation.annotations(4,$field)
-    private $field.formatedType(0) $field.formatedName(0)#if($field.hasInitialValue()) = ${field.initialValue} #end;
+    private $field.formatedType(0) $field.formatedName(0);
 #end
 
 #end
@@ -61,19 +60,18 @@ $beanValidation.annotations(4,$field)
     // ENTITY DATA FIELDS 
     //----------------------------------------------------------------------    
 #foreach( $field in $dataFields )
-$jpa.fieldAnnotations(4,$field)
-$beanValidation.annotations(4,$field)
-    private $field.formatedType(0) $field.formatedName(0)#if($field.hasInitialValue()) = ${field.initialValue} #end;
+    private $field.formatedType(0) $field.formatedName(0);
 
 #end
-
     //----------------------------------------------------------------------
     // ENTITY LINKS ( RELATIONSHIP )
     //----------------------------------------------------------------------
 #foreach( $link in $entity.selectedLinks )
-$jpa.linkAnnotations(4, $link, $allMappedFields )
-    private $link.formatedType(0) $link.formatedName(0);
+#if( $link.isCardinalityOneToOne() || $link.isCardinalityManyToOne() )
+#set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
+    private Item${entityLink.name} ${link.formatedName(0)} = new Item${entityLink.name}();
 
+#end
 #end
 #if ( $entity.hasCompositePrimaryKey() )
     //----------------------------------------------------------------------
@@ -87,7 +85,22 @@ $jpa.linkAnnotations(4, $link, $allMappedFields )
         this.id = id;
     }
 
+#foreach( $field in $entity.keyAttributes )
+#if ( $field.setter )    public void ${field.setter}( $field.formatedType(0) $field.name )
+    {
+        this.id.${field.setter}( $field.name ) ;
+    }
+
+#end
+#if ( $field.getter )    public $field.formatedType(0) ${field.getter}()
+    {
+        return this.id.${field.getter}() ;
+    }
+
+#end
+#end
 #else 
+
     //----------------------------------------------------------------------
     // GETTER & SETTER FOR THE KEY FIELD
     //----------------------------------------------------------------------
@@ -131,18 +144,23 @@ $jpa.linkAnnotations(4, $link, $allMappedFields )
     // GETTERS & SETTERS FOR LINKS
     //----------------------------------------------------------------------
 #foreach( $link in $entity.selectedLinks )
-#if ( $link.setter )    public void ${link.setter}( ${link.linkType} ${link.javaName} )
+#if( $link.isCardinalityManyToOne() )
+#set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
+#if ( $link.setter )
+    public void set${tools.capitalize($link.formatedName(0))}( Item${entityLink.name} ${link.formatedName(0)} )
     {
-        this.${link.javaName} = ${link.javaName};
+        this.${link.formatedName(0)} = ${link.formatedName(0)};
     }
 #end
-#if ( $link.getter )    public ${link.linkType} ${link.getter}()
+#if ( $link.getter )
+    public Item${entityLink.name} get${tools.capitalize($link.formatedName(0))}()
     {
-        return this.${link.javaName};
+        return this.${link.formatedName(0)};
     }
 #end
 
-#end  
+#end
+#end 
 
     //----------------------------------------------------------------------
     // toString METHOD

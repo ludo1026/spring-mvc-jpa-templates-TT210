@@ -68,7 +68,7 @@
 ## LINKS
 #foreach( $link in $entity.selectedLinks )
 #if ( $link.isCardinalityOneToOne() || $link.isCardinalityManyToOne() )
-							<td><s:eval expression="${entity.name.toLowerCase()}.${link.formatedName(0)}" /></td>
+							<td>${_}{${entity.name.toLowerCase()}.${link.formatedName(0)}}</td>
 #end
 #end
 							<s:url var="edit${entity.name}Url" value="/${entity.name.toLowerCase()}$keyURLPath"/>

@@ -11,7 +11,7 @@ import org.telosys.tools.generator.context.JavaBeanClassForeignKeyColumn;
 import org.telosys.tools.generator.context.JavaBeanClassLink;
 
 public class Tools {
-
+	
 	/**
 	 * Indicates if the attribute type is text
 	 * @param attribute Attribute
@@ -270,6 +270,23 @@ public class Tools {
 		}
 		return fieldsMappingForLink;
 	}
+	
+	/**
+	 * Get attribute names in the entity view model for this link.
+	 * @param entityCurrent current entity
+	 * @param entityTarget target entity
+	 * @param link link from current entity to the target entity
+	 * @param fieldsOfEntityCurrent filtered attributes list of current entity
+	 * @return view model attributes name
+	 */
+	public List<String> fieldsViewModelForLink( JavaBeanClass entityCurrent, JavaBeanClass entityTarget, JavaBeanClassLink link, List<JavaBeanClassAttribute> fieldsOfEntityCurrent) {
+		List<String> fieldsViewModelForLink = new ArrayList<String>();
+		Map<JavaBeanClassAttribute, JavaBeanClassAttribute> fieldsMappingForLink = new HashMap<JavaBeanClassAttribute, JavaBeanClassAttribute>();
+		for( JavaBeanClassAttribute fieldOfEntityTarget : fieldsMappingForLink.values() ) {
+			fieldsViewModelForLink.add(entityCurrent.getName()+capitalize(fieldOfEntityTarget.formatedName(0)));
+		}
+		return fieldsViewModelForLink;
+	}
 
 	/**
 	 * Get entity links selected on attribute criteria.
@@ -295,6 +312,54 @@ public class Tools {
 		return linksForFields(entity.getLinks(), attributes);
 	}
 
+	/**
+	 * Uncapitalize.
+	 * @param str String
+	 * @return String
+	 */
+	public String uncapitalize(String str) {
+		if(str == null || str.length() == 0) {
+			return str;
+		}
+		if(str.length() == 1) {
+			return str.toLowerCase();
+		}
+		return str.substring(0, 1).toLowerCase() + str.substring(1);
+	}
+	
+	/**
+	 * Capitalize.
+	 * @param str String
+	 * @return String
+	 */
+	public String capitalize(String str) {
+		if(str == null || str.length() == 0) {
+			return str;
+		}
+		if(str.length() == 1) {
+			return str.toUpperCase();
+		}
+		return str.substring(0, 1).toUpperCase() + str.substring(1);
+	}
+
+	/**
+	 * Uncapitalize.
+	 * @param str String
+	 * @return String
+	 */
+	public String M(String str) {
+		return capitalize(str);
+	}
+	
+	/**
+	 * Capitalize.
+	 * @param str String
+	 * @return String
+	 */
+	public String m(String str) {
+		return uncapitalize(str);
+	}
+	
 	/**
 	 * Get class name.
 	 * @param object Object
