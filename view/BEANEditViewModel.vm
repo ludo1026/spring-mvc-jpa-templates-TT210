@@ -17,9 +17,7 @@ package ${target.javaPackageFromFolder($SRC)};
 
 import java.io.Serializable;
 
-#if ( $entity.hasCompositePrimaryKey() )
 import javax.validation.Valid;
-#end
 import javax.validation.constraints.*;
 
 #if ( $entity.hasCompositePrimaryKey() )
@@ -73,7 +71,6 @@ $beanValidation.annotations(4,$field)
 #if( $link.isCardinalityOneToOne() || $link.isCardinalityManyToOne() )
 #set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
 #if( $tools.isLinkUsedByFields( $link, $entity.getAttributesByCriteria( $const.KEY ) ) )
-	@NotNull	
 	@Valid
 #end
     private Item${entityLink.name} ${link.formatedName(0)};
