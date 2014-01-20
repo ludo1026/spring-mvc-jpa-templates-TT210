@@ -27,7 +27,7 @@ import ${ROOT_PKG}.web.formatter.${entity.name}Formatter;
 #end
 
 @Component
-public class ApplicationConversionServiceFactoryBean extends FormattingConversionServiceFactoryBean {
+public class ConversionServiceFactoryBean extends FormattingConversionServiceFactoryBean {
 
 #foreach( $entity in $selectedEntities )
 	@Resource

@@ -45,8 +45,8 @@ public class ${entity.name}EditViewModel implements Serializable
     //----------------------------------------------------------------------
     // ENTITY PRIMARY KEY ( EMBEDDED IN AN EXTERNAL CLASS )  
     //----------------------------------------------------------------------
-//	@Valid
-    private ${entity.name}Id id = new ${entity.name}Id();
+	@Valid
+    private ${entity.name}Id id;
 
 #else 
     //----------------------------------------------------------------------
@@ -72,8 +72,11 @@ $beanValidation.annotations(4,$field)
 #foreach( $link in $entity.selectedLinks )
 #if( $link.isCardinalityOneToOne() || $link.isCardinalityManyToOne() )
 #set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
-    private Item${entityLink.name} ${link.formatedName(0)} = new Item${entityLink.name}();
-//    private $tools.keyType($entityLink) ${link.formatedName(0)}${tools.capitalize($tools.keyName($entityLink))};
+#if( $tools.isLinkUsedByFields( $link, $entity.getAttributesByCriteria( $const.KEY ) ) )
+	@NotNull	
+	@Valid
+#end
+    private Item${entityLink.name} ${link.formatedName(0)};
 
 #end
 #end
@@ -137,9 +140,9 @@ $beanValidation.annotations(4,$field)
 #if( $link.isCardinalityManyToOne() )
 #set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
 #if ( $link.setter )
-    public void set${tools.capitalize($link.formatedName(0))}( Item${entityLink.name} $tools.keyName($entityLink) )
+    public void set${tools.capitalize($link.formatedName(0))}( Item${entityLink.name} item${entityLink.name} )
     {
-        this.${link.formatedName(0)} = $tools.keyName($entityLink);
+        this.${link.formatedName(0)} = item${entityLink.name};
     }
 #end
 #if ( $link.getter )
@@ -148,20 +151,6 @@ $beanValidation.annotations(4,$field)
         return this.${link.formatedName(0)};
     }
 #end
-/*
-#if ( $link.setter )
-    public void set${tools.capitalize($link.formatedName(0))}${tools.capitalize($tools.keyName($entityLink))}( ${tools.keyType($entityLink)} $tools.keyName($entityLink) )
-    {
-        this.${link.formatedName(0)}${tools.capitalize($tools.keyName($entityLink))} = $tools.keyName($entityLink);
-    }
-#end
-#if ( $link.getter )
-    public ${tools.keyType($entityLink)} get${tools.capitalize($link.formatedName(0))}${tools.capitalize($tools.keyName($entityLink))}()
-    {
-        return this.${link.formatedName(0)}${tools.capitalize($tools.keyName($entityLink))};
-    }
-#end
-*/
 #end
 #end 
 

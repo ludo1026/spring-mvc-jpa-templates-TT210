@@ -16,8 +16,8 @@ public interface ${entity.name}EditViewManager {
 
 	void displayUpdate(Model model, ${tools.keyType($entity)} ${tools.keyName($entity)});
 
-	void create(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel);
+	${entity.name}EditViewModel create(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel);
 
-	void update(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel);
+	${entity.name}EditViewModel update(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel);
 	
 }

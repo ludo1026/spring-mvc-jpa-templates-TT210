@@ -73,8 +73,12 @@ public class ${entity.name}EditViewManagerImpl extends AbstractViewManager imple
 		init(model, ${tools.uncapitalize($entity.name)}EditViewModel);
 	}
 	
-	public void create(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel) {
+	public ${entity.name}EditViewModel create(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel) {
 		${entity.name} ${tools.uncapitalize($entity.name)} = modelMapper.map(${tools.uncapitalize($entity.name)}EditViewModel, ${entity.name}.class);
+
+#if( $entity.hasCompositePrimaryKey() )
+		${tools.uncapitalize($entity.name)}.${tools.keySetter($entity)}(new ${tools.keyType($entity)}());
+#end
 
 ## define primary key field which are defined by link entity id
 ## Mapped fields = fields in Primary Key or not in selected Links
@@ -120,9 +124,10 @@ public class ${entity.name}EditViewManagerImpl extends AbstractViewManager imple
 		
 		${tools.uncapitalize($entity.name)}EditViewModel = modelMapper.map(${tools.uncapitalize($entity.name)}, ${entity.name}EditViewModel.class);
 		init(model, ${tools.uncapitalize($entity.name)}EditViewModel);
+		return ${tools.uncapitalize($entity.name)}EditViewModel;
 	}
 	
-	public void update(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel) {
+	public ${entity.name}EditViewModel update(Model model, ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}EditViewModel) {
 		${entity.name} ${tools.uncapitalize($entity.name)} = ${tools.uncapitalize($entity.name)}Service.findById(${tools.uncapitalize($entity.name)}EditViewModel.${tools.keyGetter($entity)}());
 		
 		modelMapper.map(${tools.uncapitalize($entity.name)}EditViewModel, ${tools.uncapitalize($entity.name)});
@@ -131,6 +136,7 @@ public class ${entity.name}EditViewManagerImpl extends AbstractViewManager imple
 		
 		${tools.uncapitalize($entity.name)}EditViewModel = modelMapper.map(${tools.uncapitalize($entity.name)}, ${entity.name}EditViewModel.class);
 		init(model, ${tools.uncapitalize($entity.name)}EditViewModel);
+		return ${tools.uncapitalize($entity.name)}EditViewModel;
 	}
 
 }

@@ -109,7 +109,7 @@ public class ${entity.name}Controller extends AbstractController
 	public String create(@Valid ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		try {
 			if (!result.hasErrors()) {
-				${tools.uncapitalize($entity.name)}EditViewManager.create(model, ${tools.uncapitalize($entity.name)});
+				${tools.uncapitalize($entity.name)} = ${tools.uncapitalize($entity.name)}EditViewManager.create(model, ${tools.uncapitalize($entity.name)});
 				messageHelper.addMessage(redirectAttributes, new Message(TypeMessage.SUCCESS,"save.ok"));
 				return "redirect:/${tools.uncapitalize($entity.name)}/"+controllerHelper.encodeUrlPathSegments(httpServletRequest, $keyGetterToArg);
 			} else {
@@ -129,7 +129,7 @@ public class ${entity.name}Controller extends AbstractController
 	public String update(@Valid ${entity.name}EditViewModel ${tools.uncapitalize($entity.name)}, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpServletRequest httpServletRequest) {
 		try {
 			if (!result.hasErrors()) {
-				${tools.uncapitalize($entity.name)}EditViewManager.update(model, ${tools.uncapitalize($entity.name)});
+				${tools.uncapitalize($entity.name)} = ${tools.uncapitalize($entity.name)}EditViewManager.update(model, ${tools.uncapitalize($entity.name)});
 				messageHelper.addMessage(redirectAttributes, new Message(TypeMessage.SUCCESS,"save.ok"));
 				return "redirect:/${tools.uncapitalize($entity.name)}/"+controllerHelper.encodeUrlPathSegments(httpServletRequest, $keyGetterToArg);
 			} else {

@@ -10,18 +10,14 @@
 ## Link fields = fields not in Primary Key and used as FK in selected Links    
 #set( $fieldLinks = $entity.getAttributesByCriteria( $const.NOT_KEY, $const.IN_SELECTED_LINKS ) )
 ##--------------------------------------------------------------------------------------------------------
-## Mapped fields = fields in Primary Key or not in selected Links    
-#set( $allMappedFields = $fn.concatLists($entity.keyAttributes, $dataFields) )
-##--------------------------------------------------------------------------------------------------------
 ## keyURLPath : PRIMARY KEY IN URL
-##--------------------------------------------------------------------------------------------------------
 #set( $keyURLPath = "")
 #if ( $entity.hasCompositePrimaryKey() )
 #foreach( $field in $entity.keyAttributes )
-#set( $keyURLPath = $keyURLPath+"/${"+${tools.uncapitalize($entity.name)}+"."+${field.formatedName(0)}+"}" )
+#set( $keyURLPath = $keyURLPath+"/${"+${tools.uncapitalize($entity.name)}+"EditViewModel."+${tools.keyName($entity)}+"."+${field.formatedName(0)}+"}" )
 #end
 #else
-#set( $keyURLPath = $keyURLPath+"/${"+${tools.uncapitalize($entity.name)}+"."+${tools.keyName($entity)}+"}" )
+#set( $keyURLPath = $keyURLPath+"/${"+${tools.uncapitalize($entity.name)}+"EditViewModel."+${tools.keyName($entity)}+"}" )
 #end
 ##--------------------------------------------------------------------------------------------------------
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -36,20 +32,74 @@
 			<util:message message="${_}{message}" messages="${_}{messages}" />
 			
 	    	<s:url value="/${tools.uncapitalize($entity.name)}" var="url_form_submit" />
-			<form:form class="form-horizontal" modelAttribute="${tools.uncapitalize($entity.name)}CreateViewModel" cssClass="well form-horizontal" method="POST" action="${_}{url_form_submit}">
+	    	<c:choose>
+	    		<c:when test="${_}{mode == 'create'}">
+	    			<c:set var="method" value="POST" />
+    			</c:when>
+	    		<c:otherwise>
+	    			<c:set var="method" value="PUT" />
+	    		</c:otherwise>
+	    	</c:choose>
+			<form:form class="form-horizontal" modelAttribute="${tools.uncapitalize($entity.name)}EditViewModel" cssClass="well form-horizontal" method="${_}{method}" action="${_}{url_form_submit}">
 				<form:errors path="*" cssClass="alert alert-danger" element="div" />
+
+				<c:if test="${_}{mode != 'create'}">
+#if( ! $entity.hasCompositePrimaryKey() )
+					<form:hidden path="${tools.keyName($entity)}" />
+#else
+#foreach( $field in $entity.keyAttributes )
+					<form:hidden path="${tools.keyName($entity)}.${field.formatedName(0)}" />
+#end
+#end
+				</c:if>
+
+## READ ONLY
+## LINKS : afficher uniquement les liens qui sont modifiables (pas dans la clé primaire)
+#foreach( $link in $entity.links )
+#if( !$link.isCardinalityManyToMany() && !$link.isCardinalityOneToMany() )
+#set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
+#if( ! $tools.isLinkUsedByFields( $link, $entity.getAttributesByCriteria( $const.NOT_KEY ) ) )
+				<c:choose>
+	    			<c:when test="${_}{mode == 'create'}">
+						<div class="form-group">
+							<label for="${link.formatedName(0)}_${tools.keyName($entityLink)}" class="col-sm-2 control-label"><s:message code="${tools.uncapitalize($entity.name)}.${link.formatedName(0)}"/></label>
+							<div class="col-sm-10">
+								<form:select id="${link.formatedName(0)}_${tools.keyName($entityLink)}" path="${link.formatedName(0)}.value" cssClass="form-control">
+									<form:option value=""></form:option>
+									<form:options items="${_}{${tools.uncapitalize($link.targetEntityType)}s}" itemValue="value" itemLabel="label" />
+								</form:select>
+								<input:errors name="${link.formatedName(0)}.value" id="${link.formatedName(0)}_${tools.keyName($entityLink)}_errors" />
+							</div>
+						</div>
+					</c:when>
+		    		<c:otherwise>
+						<div class="form-group">
+							<label for="${link.formatedName(0)}" class="col-sm-2 control-label"><s:message code="${tools.uncapitalize($entity.name)}.${link.formatedName(0)}"/></label>
+							<div class="col-sm-10">
+								${_}{${tools.uncapitalize($entity.name)}EditViewModel.${link.formatedName(0)}}
+							</div>
+						</div>
+					</c:otherwise>
+				</c:choose>
+#end
+#end
+#end
+## FOR UPDATE
 ## KEY
 #foreach( $field in $keyFields )
 #if( ! $field.isUsedInLinkJoinColumn($entity.links) )
-#if( ! $field.isGeneratedValue() )
+#if( ! $entity.hasCompositePrimaryKey() )
+#set( $fieldName = ${field.formatedName(0)} )
+#else
+#set( $fieldName = ${tools.keyName($entity)}+"."+${field.formatedName(0)} )
+#end
 				<div class="form-group">
-					<label for="${field.formatedName(0)}" class="col-sm-2 control-label"><s:message code="${tools.uncapitalize($entity.name)}.${field.formatedName(0)}"/></label>
+					<label for="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}" class="col-sm-2 control-label"><s:message code="${tools.uncapitalize($entity.name)}.${field.formatedName(0)}"/></label>
 					<div class="col-sm-10">
-						<form:input path="${field.name}" class="form-control" />
-						<form:errors cssClass="label label-danger" id="_${field.formatedName(0)}_error_id" path="${field.formatedName(0)}" />
+						<input:text name="${fieldName}" id="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}" disabled="${_}{mode != 'create'}" />
+						<input:errors name="${fieldName}" id="${tools.uncapitalize($entity.name)}_${field.formatedName(0)}_errors" />
 					</div>
 				</div>
-#end
 #end
 #end
 ## FIELDS
@@ -73,24 +123,32 @@
 					</div>
 				</div>
 #end
-## LINKS
+## LINKS : afficher uniquement les liens qui sont modifiables (pas dans la clé primaire)
 #foreach( $link in $entity.links )
 #if ( $link.isCardinalityOneToOne() || $link.isCardinalityManyToOne() )
 #set( $entityLink = $model.getEntityByClassName($link.targetEntityType) )
+#if( $tools.isLinkUsedByFields( $link, $entity.getAttributesByCriteria( $const.NOT_KEY ) ) )
 				<div class="form-group">
 					<label for="${link.formatedName(0)}_${tools.keyName($entityLink)}" class="col-sm-2 control-label"><s:message code="${tools.uncapitalize($entity.name)}.${link.formatedName(0)}"/></label>
 					<div class="col-sm-10">
-						<form:select id="${link.formatedName(0)}_${tools.keyName($entityLink)}" path="${link.formatedName(0)}${tools.capitalize($tools.keyName($entityLink))}" cssClass="form-control">
+						<form:select id="${link.formatedName(0)}_${tools.keyName($entityLink)}" path="${link.formatedName(0)}.value" cssClass="form-control">
 							<form:option value=""></form:option>
 							<form:options items="${_}{${tools.uncapitalize($link.targetEntityType)}s}" itemValue="value" itemLabel="label" />
 						</form:select>
-						<input:errors name="${link.formatedName(0)}${tools.capitalize($tools.keyName($entityLink))}" id="${tools.uncapitalize($entity.name)}_${link.formatedName(0)}_errors" />
+						<input:errors name="${link.formatedName(0)}" id="${tools.uncapitalize($entity.name)}_${link.formatedName(0)}_errors" />
 					</div>
 				</div>
 #end
 #end
+#end
 				<div class="form-group">
-					<div class="col-sm-offset-8 col-sm-2">
+					<div class="col-sm-offset-2 col-sm-2">
+						<c:if test="${_}{mode != 'create'}">
+							<s:url var="delete${entity.name}Url" value="/${tools.uncapitalize($entity.name)}/delete${keyURLPath}"/>
+							<a role="button" class="btn btn-danger btn-block" href="${_}{delete${entity.name}Url}"><s:message code="delete"/></a>
+						</c:if>
+					</div>
+    				<div class="col-sm-offset-4 col-sm-2">
 		 				<s:url var="all${entity.name}Url" value="/${tools.uncapitalize($entity.name)}"/>
 						<a role="button" class="btn btn-default btn-block" href="${_}{all${entity.name}Url}"><s:message code="cancel"/></a>
 					</div>

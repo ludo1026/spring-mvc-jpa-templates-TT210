@@ -7,10 +7,13 @@ import ${ENTITY_PKG}.${entity.name}Id;
 #end
 import ${ROOT_PKG}.mapping.item.base.AbstractItem;
 
+import javax.validation.constraints.*;
+
 public class Item${entity.name} extends AbstractItem<${tools.keyType($entity)}> {
 	
 	private static final long serialVersionUID = 2L;
 	
+	@NotNull
 	private ${tools.keyType($entity)} value;
 	
 	public ${tools.keyType($entity)} getValue() {

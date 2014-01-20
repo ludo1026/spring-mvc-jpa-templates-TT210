@@ -14,7 +14,7 @@
 ##--------------------------------------------------------------------------------------------------------
 ## IF COMPOSITE PRIMARY KEY : GENERATE A JAVA CLASS FOR THIS COMPOSITE KEY
 #if ( $entity.hasCompositePrimaryKey() )
-#set( $ttt = $generator.generate($target.entityName ,  "${entity.name}Id.java", $target.folder, "entity/entity_pk.vm"  ) )
+#set( $ttt = $generator.generate($target.entityName ,  "${entity.name}Id.java", $target.folder, "entity/BEANId.vm"  ) )
 #end
 package ${target.javaPackageFromFolder($SRC)};
 
